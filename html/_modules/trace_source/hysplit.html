@@ -1,0 +1,1064 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>trace_source.hysplit &mdash; trace 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="trace 0.1 documentation" href="../../index.html"/>
+        <link rel="up" title="trace_source" href="../trace_source.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> trace
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_overview.html">api documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">trace</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../trace_source.html">trace_source</a> &raquo;</li>
+      
+    <li>trace_source.hysplit</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for trace_source.hysplit</h1><div class="highlight"><pre>
+<span class="ch">#! /usr/bin/env python3</span>
+<span class="c1"># coding=utf-8</span>
+<span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Author: radenz@tropos.de</span>
+
+<span class="sd">TODO</span>
+<span class="sd">----</span>
+
+<span class="sd">&quot;&quot;&quot;</span> 
+
+<span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">gc</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">Counter</span><span class="p">,</span> <span class="n">namedtuple</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">toml</span>
+<span class="kn">import</span> <span class="nn">netCDF4</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;/../&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">trace_source</span>
+
+
+<div class="viewcode-block" id="plot_trajectories_ens"><a class="viewcode-back" href="../../api_overview.html#trace_source.hysplit.plot_trajectories_ens">[docs]</a><span class="k">def</span> <span class="nf">plot_trajectories_ens</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="n">savepath</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    plot multiple trajectories into one scene</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        traj (:class:`.trajectory`): trajectory to plot instance to plot</span>
+<span class="sd">        savepath (str): path to save</span>
+<span class="sd">        ls (:class:`trace_source.land_sfc.land_sfc`, optional): pre loaded land surface information</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">import</span> <span class="nn">matplotlib</span>
+    <span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;Agg&#39;</span><span class="p">)</span>
+    <span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+    <span class="k">if</span> <span class="n">ls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ls</span> <span class="o">=</span> <span class="n">trace_source</span><span class="o">.</span><span class="n">land_sfc</span><span class="o">.</span><span class="n">land_sfc</span><span class="p">()</span>
+
+    <span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;purple&#39;</span><span class="p">,</span> <span class="s1">&#39;darkorange&#39;</span><span class="p">,</span> <span class="s1">&#39;hotpink&#39;</span><span class="p">,</span> <span class="s1">&#39;dimgrey&#39;</span><span class="p">]</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="s1">&#39;purple&#39;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">savepath</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">savepath</span><span class="p">)</span>
+
+    <span class="c1">###</span>
+    <span class="c1"># the map</span>
+    <span class="c1">###</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="c1">#ax = plt.axes(projection=ccrs.Miller(central_longitude=-170.))</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">Miller</span><span class="p">())</span>
+    <span class="c1"># Projection for the north pole</span>
+    <span class="c1"># ax = plt.axes(projection=ccrs.NorthPolarStereo())</span>
+
+    <span class="c1">####</span>
+    <span class="c1"># make a color map of fixed colors</span>
+    <span class="n">cmap</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">ListedColormap</span><span class="p">([</span><span class="s1">&#39;lightskyblue&#39;</span><span class="p">,</span> <span class="s1">&#39;darkgreen&#39;</span><span class="p">,</span> <span class="s1">&#39;khaki&#39;</span><span class="p">,</span> <span class="s1">&#39;palegreen&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="s1">&#39;tan&#39;</span><span class="p">])</span>
+    <span class="n">bounds</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">,</span> <span class="mf">6.5</span><span class="p">]</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">BoundaryNorm</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="n">cmap</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+    <span class="c1">####</span>
+    <span class="n">pcm</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">pcolormesh</span><span class="p">(</span><span class="n">ls</span><span class="o">.</span><span class="n">longs</span><span class="p">,</span> <span class="n">ls</span><span class="o">.</span><span class="n">lats</span><span class="p">,</span> <span class="n">ls</span><span class="o">.</span><span class="n">land_sfc</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">())</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">coastlines</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">traj</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">],</span>
+                <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">c</span><span class="p">,</span>
+                <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">Geodetic</span><span class="p">())</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">][::</span><span class="mi">24</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">][::</span><span class="mi">24</span><span class="p">],</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">c</span><span class="p">,</span>
+                <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">Geodetic</span><span class="p">())</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">gridlines</span><span class="p">(</span><span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+    <span class="c1"># bounds for the north pole</span>
+    <span class="c1">#ax.set_extent([-180, 180, 50, 90], crs=ccrs.PlateCarree())</span>
+    <span class="c1"># bounds for punta arenas</span>
+    <span class="c1">#ax.set_extent([-180, 180, -90, 10], crs=ccrs.PlateCarree())</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_extent</span><span class="p">([</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="o">-</span><span class="mi">70</span><span class="p">,</span> <span class="mi">75</span><span class="p">],</span> <span class="n">crs</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">())</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Trajectory {}UTC</span><span class="se">\n</span><span class="s1">{} {} &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">traj</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H&#39;</span><span class="p">),</span>
+                                                   <span class="n">traj</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">],</span> <span class="n">traj</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]),</span>
+                 <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;semibold&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+
+    <span class="n">savename</span> <span class="o">=</span> <span class="n">savepath</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">traj</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">_%H&quot;</span><span class="p">)</span> \
+        <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="s1">&#39;{:0&gt;5.0f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">traj</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;_trajectories_map.png&quot;</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">savename</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">250</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="c1">###</span>
+    <span class="c1"># the profile</span>
+    <span class="c1">###</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">traj</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">])</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;AIR_TEMP&#39;</span><span class="p">][:]</span> <span class="o">-</span> <span class="mf">273.15</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;RELHUMID&#39;</span><span class="p">][:])</span>
+        <span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;RAINFALL&#39;</span><span class="p">][:])</span>
+
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Height [m]&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">dates</span><span class="o">.</span><span class="n">DayLocator</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_minor_locator</span><span class="p">(</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">dates</span><span class="o">.</span><span class="n">HourLocator</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">]))</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">dates</span><span class="o">.</span><span class="n">DateFormatter</span><span class="p">(</span><span class="s1">&#39;%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">))</span>
+
+    <span class="c1"># ax[1].set_ylim(0,10000)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Temperature [°C]&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mi">40</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">dates</span><span class="o">.</span><span class="n">DayLocator</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_minor_locator</span><span class="p">(</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">dates</span><span class="o">.</span><span class="n">HourLocator</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">]))</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">dates</span><span class="o">.</span><span class="n">DateFormatter</span><span class="p">(</span><span class="s1">&#39;%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">))</span>
+
+    <span class="c1"># ax[2].grid(True, axis=&#39;y&#39;)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;rel Humidity [%]&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">dates</span><span class="o">.</span><span class="n">DayLocator</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_minor_locator</span><span class="p">(</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">dates</span><span class="o">.</span><span class="n">HourLocator</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">]))</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">dates</span><span class="o">.</span><span class="n">DateFormatter</span><span class="p">(</span><span class="s1">&#39;%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">))</span>
+
+    <span class="c1"># ax[3].grid(True, axis=&#39;y&#39;)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Day&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Precip [mm]&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">dates</span><span class="o">.</span><span class="n">DayLocator</span><span class="p">(</span><span class="n">interval</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_minor_locator</span><span class="p">(</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">dates</span><span class="o">.</span><span class="n">HourLocator</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">12</span><span class="p">]))</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_major_formatter</span><span class="p">(</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">dates</span><span class="o">.</span><span class="n">DateFormatter</span><span class="p">(</span><span class="s1">&#39;%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">:</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                         <span class="n">direction</span><span class="o">=</span><span class="s1">&#39;in&#39;</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Trajectory {}UTC</span><span class="se">\n</span><span class="s1">{} {} &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">traj</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H&#39;</span><span class="p">),</span>
+                                                      <span class="n">traj</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">],</span> <span class="n">traj</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">]),</span>
+                    <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;semibold&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+    <span class="n">savename</span> <span class="o">=</span> <span class="n">savepath</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">traj</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">_%H&quot;</span><span class="p">)</span> \
+        <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="s1">&#39;{:0&gt;5.0f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">traj</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;_trajectories_prof.png&quot;</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">savename</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">250</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="save_item"><a class="viewcode-back" href="../../api_overview.html#trace_source.hysplit.save_item">[docs]</a><span class="k">def</span> <span class="nf">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">item_data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save an item to the dataset with the data given as a dict</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset (:obj:netCDF4.Dataset): netcdf4 Dataset to add</span>
+<span class="sd">        item_data (dict): with the data to add, for example:</span>
+
+<span class="sd">    ==================  ===============================================================</span>
+<span class="sd">     Key                 Example                            </span>
+<span class="sd">    ==================  ===============================================================</span>
+<span class="sd">     ``var_name``        Z                                  </span>
+<span class="sd">     ``dimension``       (&#39;time&#39;, &#39;height&#39;)                 </span>
+<span class="sd">     ``arr``             self.corr_refl_reg[:].filled()     </span>
+<span class="sd">     ``long_name``       &quot;Reflectivity factor&quot;              </span>
+<span class="sd">     **optional**                                             </span>
+<span class="sd">     ``comment``         &quot;Wind profiler reflectivity factor corrected by cloud radar&quot;</span>
+<span class="sd">     ``units``           &quot;dBz&quot;                              </span>
+<span class="sd">     ``missing_value``   -200.                              </span>
+<span class="sd">     ``plot_range``      [-50., 20.]                        </span>
+<span class="sd">     ``plot_scale``      &quot;linear&quot;                           </span>
+<span class="sd">     ``vartype``         np.float32                         </span>
+<span class="sd">    ==================  ===============================================================</span>
+<span class="sd"> </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="s1">&#39;vartype&#39;</span> <span class="ow">in</span> <span class="n">item_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;var_name&#39;</span><span class="p">],</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;vartype&#39;</span><span class="p">],</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;dimension&#39;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;var_name&#39;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;dimension&#39;</span><span class="p">])</span>
+    <span class="n">item</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;arr&#39;</span><span class="p">]</span>
+    <span class="n">item</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;long_name&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;comment&#39;</span> <span class="ow">in</span> <span class="n">item_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;units&#39;</span> <span class="ow">in</span> <span class="n">item_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;units_html&#39;</span> <span class="ow">in</span> <span class="n">item_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">units_html</span> <span class="o">=</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;units_html&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;missing_value&#39;</span> <span class="ow">in</span> <span class="n">item_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">missing_value</span> <span class="o">=</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;missing_value&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;plot_range&#39;</span> <span class="ow">in</span> <span class="n">item_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">plot_range</span> <span class="o">=</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;plot_range&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;plot_scale&#39;</span> <span class="ow">in</span> <span class="n">item_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">plot_scale</span> <span class="o">=</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;plot_scale&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;axis&#39;</span> <span class="ow">in</span> <span class="n">item_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;axis&#39;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">dataset</span></div>
+
+
+<div class="viewcode-block" id="assemble_time_height"><a class="viewcode-back" href="../../api_overview.html#trace_source.hysplit.assemble_time_height">[docs]</a><span class="k">class</span> <span class="nc">assemble_time_height</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    assemble a time height period by putting multiple hysplit trajectories togehter,</span>
+<span class="sd">    calculate the statistics and save to a netcdf file</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+
+<span class="sd">        config_file (str, optional): path to the config file </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_file</span><span class="o">=</span><span class="s1">&#39;../config.toml&#39;</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">config_file</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">toml</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">config_file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="s1">&#39;begin_dt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="s1">&#39;begin&#39;</span><span class="p">],</span>
+                                                                     <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">_%H&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="s1">&#39;end_dt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="s1">&#39;end&#39;</span><span class="p">],</span>
+                                                                   <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">_%H&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span> <span class="o">=</span> <span class="n">trace_source</span><span class="o">.</span><span class="n">time_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="s1">&#39;begin_dt&#39;</span><span class="p">],</span>
+                                              <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="s1">&#39;end_dt&#39;</span><span class="p">],</span>
+                                              <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="s1">&#39;step&#39;</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;dt_list&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">height_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">][</span><span class="s1">&#39;top&#39;</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">500</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="assemble_time_height.assemble"><a class="viewcode-back" href="../../api_overview.html#trace_source.hysplit.assemble_time_height.assemble">[docs]</a>    <span class="k">def</span> <span class="nf">assemble</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt_range</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        assemble the statistics for a range of trajectories and</span>
+<span class="sd">        save the statistics to dicts</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            dt_range (list(datetime), optional): timerange for that the statistics is assembled,</span>
+<span class="sd">                default taken from config </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">dt_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span> <span class="o">=</span> <span class="n">trace_source</span><span class="o">.</span><span class="n">time_list</span><span class="p">(</span><span class="n">dt_range</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                  <span class="n">dt_range</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                                  <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="s1">&#39;step&#39;</span><span class="p">])</span>
+
+        <span class="c1"># only for the testcase</span>
+        <span class="n">traj_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;traj_dir&#39;</span><span class="p">]</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">traj_dir</span><span class="p">)</span>
+        <span class="c1"># filter only for the trajectory files with tdump extension</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="n">f</span><span class="p">[</span><span class="o">-</span><span class="mi">6</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;.tdump&#39;</span><span class="p">]</span>
+
+        <span class="c1"># the defaultdict is used here to sort the files by datetime within a dictionary</span>
+        <span class="n">filtered_files</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="c1"># regex the yyyymmdd-hh timestamp in the filename</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;([0-9]{8})-([0-9]){2}&#39;</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">-%H&#39;</span><span class="p">)</span>
+            <span class="n">height</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s1">&#39;([0-9]{3,6})(?=_0[0-9-]{1,4}.tdump)&#39;</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+            <span class="c1">#print(f, dt, height)</span>
+            <span class="k">if</span> <span class="n">dt</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">dt</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">filtered_files</span><span class="p">[</span><span class="n">dt</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">f</span><span class="p">,</span><span class="n">height</span><span class="p">))</span>
+
+        <span class="c1"># here an empty dict is generated with a zero containing array</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stat2d_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height_list</span><span class="p">))))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statls_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height_list</span><span class="p">),</span> <span class="mi">7</span><span class="p">)))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">raw_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height_list</span><span class="p">),</span>
+                                                     <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="s1">&#39;tr_duration&#39;</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span><span class="p">)))</span>
+
+        <span class="c1"># TODO make more than 7 geo names possible</span>
+        <span class="n">ng</span> <span class="o">=</span> <span class="n">trace_source</span><span class="o">.</span><span class="n">land_sfc</span><span class="o">.</span><span class="n">named_geography</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;geonames&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">geo_names</span> <span class="o">=</span> <span class="n">ng</span><span class="o">.</span><span class="n">geo_names</span>
+        <span class="n">no_geo_names</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geo_names</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statgn_dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">),</span>
+                                                         <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height_list</span><span class="p">),</span>
+                                                         <span class="n">no_geo_names</span><span class="p">)))</span>
+
+        <span class="n">ls</span> <span class="o">=</span> <span class="n">trace_source</span><span class="o">.</span><span class="n">land_sfc</span><span class="o">.</span><span class="n">land_sfc</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ls_categories</span> <span class="o">=</span> <span class="n">ls</span><span class="o">.</span><span class="n">categories</span>
+
+        <span class="k">for</span> <span class="n">it</span><span class="p">,</span> <span class="n">dt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">[:]):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+            <span class="c1"># sort by height</span>
+            <span class="n">f_list</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">filtered_files</span><span class="p">[</span><span class="n">dt</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;file_list &#39;</span><span class="p">,</span> <span class="n">f_list</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">f_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">ih</span><span class="p">,</span> <span class="n">f</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">f_list</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">ih</span><span class="p">,</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dt</span><span class="p">)</span>
+                <span class="n">traj</span> <span class="o">=</span> <span class="n">trajectory</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+                <span class="n">traj</span><span class="o">.</span><span class="n">load_file</span><span class="p">(</span><span class="n">traj_dir</span><span class="o">+</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">silent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">savepath</span> <span class="o">=</span> <span class="s1">&#39;{}/{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;plot_dir&#39;</span><span class="p">],</span> <span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">f</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mf">3000.0</span> <span class="ow">and</span> <span class="n">dt</span><span class="o">.</span><span class="n">hour</span> <span class="o">%</span> <span class="mi">12</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1">#if f[1] &lt;= 3000.0 and dt.hour % 6 == 0:</span>
+                    <span class="n">plot_trajectories_ens</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="n">savepath</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="n">ls</span><span class="p">)</span>
+                <span class="c1">#continue</span>
+
+                <span class="n">traj</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">silent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">traj</span><span class="o">.</span><span class="n">add_land_sfc</span><span class="p">(</span><span class="n">ls</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">traj</span><span class="o">.</span><span class="n">add_ensemble_land_sfc</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span>
+                <span class="n">traj</span><span class="o">.</span><span class="n">add_ensemble_geo_names</span><span class="p">(</span><span class="n">ng</span><span class="p">)</span>
+                <span class="c1">#traj.add_area_land_sfc(&#39;md&#39;, ls, silent=True)</span>
+                <span class="c1">#traj.add_area_land_sfc(2000, ls, silent=True)</span>
+
+                <span class="c1">#print(&quot;at step&quot;, it, dt, ih, f)</span>
+                <span class="c1">#print(&#39;keys &#39;, traj.statistics.keys())</span>
+                <span class="c1"># now the empty dict is filled with the keys (and values) of the statistics dict from traj</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">traj</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">stat2d_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">it</span><span class="p">,</span> <span class="n">ih</span><span class="p">]</span> <span class="o">=</span> <span class="n">traj</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="c1"># subset of trajectory data to collect</span>
+                <span class="n">param_collect</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="s2">&quot;PRESSURE&quot;</span><span class="p">,</span> <span class="s2">&quot;AIR_TEMP&quot;</span><span class="p">,</span>
+                                 <span class="s2">&quot;RAINFALL&quot;</span><span class="p">,</span> <span class="s2">&quot;RELHUMID&quot;</span><span class="p">,</span> <span class="s2">&quot;TERR_MSL&quot;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="s1">&#39;land_sfc_category&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">traj</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                    <span class="n">param_collect</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;land_sfc_category&#39;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">param_collect</span><span class="p">:</span>
+                    <span class="c1">#self.raw_dict[k][it, ih, :traj.data[1][k].shape[0]] = traj.data[1][k]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">raw_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">it</span><span class="p">,</span> <span class="n">ih</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">traj</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">k</span><span class="p">]</span>
+                    <span class="c1">#self.raw_dict[k][it, ih, traj.data[1][k].shape[0]:] = -999.</span>
+
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">traj</span><span class="o">.</span><span class="n">stat_ls</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">stat2d_dict</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="s1">&#39;_no_below&#39;</span><span class="p">][</span><span class="n">it</span><span class="p">,</span> <span class="n">ih</span><span class="p">]</span> <span class="o">=</span> <span class="n">traj</span><span class="o">.</span><span class="n">stat_ls</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">no_below</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;stat ls &#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">traj</span><span class="o">.</span><span class="n">stat_ls</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">statls_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">it</span><span class="p">,</span> <span class="n">ih</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">traj</span><span class="o">.</span><span class="n">stat_ls</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">counter</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">traj</span><span class="o">.</span><span class="n">stat_gn</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">stat2d_dict</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="s1">&#39;_no_below&#39;</span><span class="p">][</span><span class="n">it</span><span class="p">,</span> <span class="n">ih</span><span class="p">]</span> <span class="o">=</span> <span class="n">traj</span><span class="o">.</span><span class="n">stat_gn</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">no_below</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;stat gn &#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">traj</span><span class="o">.</span><span class="n">stat_gn</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">statgn_dict</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">it</span><span class="p">,</span> <span class="n">ih</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">traj</span><span class="o">.</span><span class="n">stat_gn</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">counter</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+        <span class="c1"># trying to free memory</span>
+        <span class="k">del</span> <span class="n">ls</span>
+        <span class="k">del</span> <span class="n">ng</span></div>
+
+
+<div class="viewcode-block" id="assemble_time_height.dump2netcdf"><a class="viewcode-back" href="../../api_overview.html#trace_source.hysplit.assemble_time_height.dump2netcdf">[docs]</a>    <span class="k">def</span> <span class="nf">dump2netcdf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        dump the assembled data to a netcdf file repeatatly call :meth:`save_item`</span>
+<span class="sd">        configuration (directories, names, etc) is given by the config file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">timestamps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">dt</span> <span class="o">-</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1970</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">])</span>
+        <span class="n">hours_cn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dt</span><span class="o">.</span><span class="n">hour</span> <span class="o">+</span> <span class="n">dt</span><span class="o">.</span><span class="n">minute</span> <span class="o">/</span> <span class="mf">60.</span> <span class="o">+</span> <span class="n">dt</span><span class="o">.</span><span class="n">second</span> <span class="o">/</span> <span class="mf">3600.</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;output_dir&#39;</span><span class="p">]):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;output_dir&#39;</span><span class="p">])</span>
+
+        <span class="n">ncfile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;output_dir&#39;</span><span class="p">]</span> <span class="o">+</span>\
+                <span class="s1">&#39;{}_{}_hysplit-output.nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;station&#39;</span><span class="p">][</span><span class="s1">&#39;short_name&#39;</span><span class="p">])</span>
+        <span class="c1"># ncfile = &quot;/home/devel/&quot; +\</span>
+        <span class="c1">#          &#39;{}_hysplit_output.nc&#39;.format(self.config[&#39;time&#39;][&#39;begin_dt&#39;].strftime(&#39;%Y%m%d&#39;))</span>
+
+        <span class="c1">#dataset = netCDF4.Dataset(ncfile, &#39;w&#39;, format=&#39;NETCDF4&#39;)</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">netCDF4</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">ncfile</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;NETCDF3_CLASSIC&#39;</span><span class="p">)</span>
+
+        <span class="n">dim_time</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">))</span>
+        <span class="n">dim_height</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height_list</span><span class="p">))</span>
+        <span class="n">dim_age</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;time_age&#39;</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="s1">&#39;tr_duration&#39;</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">dim_cat</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;categories&#39;</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+        <span class="n">dim_regions</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;regions&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geo_names</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+
+        <span class="c1"># times_cn = dataset.createVariable(&#39;time&#39;, np.float32, (&#39;time&#39;,))</span>
+        <span class="c1"># times_cn[:] = hours_cn.astype(np.float32)</span>
+        <span class="c1"># times_cn.units = &quot;hours since &quot; + self.begin_dt.strftime(&#39;%Y-%m-%d&#39;) + &quot;00:00:00 +00:00&quot;</span>
+        <span class="c1"># times_cn.long_name = &quot;Decimal hours from midnight UTC&quot;</span>
+        <span class="c1"># times_cn.axis = &quot;T&quot;</span>
+
+        <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="p">),</span>
+                            <span class="s1">&#39;vartype&#39;</span><span class="p">:</span> <span class="s1">&#39;i4&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="n">timestamps</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
+                            <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s2">&quot;Unix timestamp&quot;</span><span class="p">,</span>
+                            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s1">&#39;axis&#39;</span><span class="p">:</span> <span class="s1">&#39;T&#39;</span><span class="p">})</span>
+        <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="p">),</span>
+                            <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="n">hours_cn</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+                            <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s2">&quot;Decimal hours from midnight UTC&quot;</span><span class="p">,</span>
+                            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s2">&quot;hours since {} 00:00:00 +00:00&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)),</span>
+                            <span class="s1">&#39;axis&#39;</span><span class="p">:</span> <span class="s1">&#39;T&#39;</span><span class="p">})</span>
+        <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="s1">&#39;range&#39;</span><span class="p">,</span> <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="p">),</span>
+                            <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height_list</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">/</span><span class="mf">1000.</span><span class="p">,</span>
+                            <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s2">&quot;Height&quot;</span><span class="p">,</span>
+                            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s2">&quot;km&quot;</span><span class="p">,</span> <span class="s1">&#39;axis&#39;</span><span class="p">:</span> <span class="s1">&#39;Z&#39;</span><span class="p">})</span>
+        <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time_age&#39;</span><span class="p">,</span> <span class="p">),</span>
+                            <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dict</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s2">&quot;Age of trajectory&quot;</span><span class="p">,</span>
+                            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s2">&quot;h&quot;</span><span class="p">})</span>
+
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stat2d_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stat2d_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">),</span>
+                                          <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stat2d_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+                                          <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="n">k</span><span class="p">})</span>
+
+        <span class="c1"># its sufficient to save the age of the trajectory once</span>
+        <span class="n">raw_data_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">raw_data_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;age&#39;</span><span class="p">)</span>
+        <span class="c1"># chance to modify some parameter descriptions for better readability</span>
+        <span class="n">modified_params</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+                                 <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s2">&quot;Hysplit &quot;</span> <span class="o">+</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()}</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">raw_data_keys</span><span class="p">}</span>
+        <span class="n">modified_params</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="s1">&#39;traj_height&#39;</span><span class="p">,</span> <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s2">&quot;Hysplit height of air parcel&quot;</span><span class="p">}</span>
+        <span class="k">if</span> <span class="s1">&#39;land_sfc_category&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">modified_params</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">modified_params</span><span class="p">[</span><span class="s1">&#39;land_sfc_category&#39;</span><span class="p">][</span><span class="s1">&#39;long_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Modis land use category (simplified)&quot;</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">raw_data_keys</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;var_name&#39;</span><span class="p">],</span>
+                                          <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="s1">&#39;time_age&#39;</span><span class="p">),</span>
+                                          <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+                                          <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;long_name&#39;</span><span class="p">]})</span>
+
+        <span class="c1"># save the land use</span>
+        <span class="n">ls_data_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statls_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ls_data_keys &#39;</span><span class="p">,</span> <span class="n">ls_data_keys</span><span class="p">)</span>
+        <span class="n">modified_params</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>
+                                 <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s2">&quot;land use &quot;</span> <span class="o">+</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+                                 <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ls_categories</span><span class="p">)}</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">ls_data_keys</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ls_data_keys</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">statls_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;var_name&#39;</span><span class="p">],</span>
+                                          <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="s1">&#39;categories&#39;</span><span class="p">),</span>
+                                          <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">statls_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">),</span>
+                                          <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;long_name&#39;</span><span class="p">],</span>
+                                          <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;comment&#39;</span><span class="p">]})</span>
+
+
+        <span class="c1"># and the geo names</span>
+        <span class="n">gn_data_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statgn_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;gn_data_keys &#39;</span><span class="p">,</span> <span class="n">gn_data_keys</span><span class="p">)</span>
+        <span class="n">modified_params</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>
+                                 <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s2">&quot;geography names &quot;</span> <span class="o">+</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+                                 <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geo_names</span><span class="p">)}</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">gn_data_keys</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">gn_data_keys</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">statgn_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;var_name&#39;</span><span class="p">],</span>
+                                          <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="s1">&#39;regions&#39;</span><span class="p">),</span>
+                                          <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">statgn_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">),</span>
+                                          <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;long_name&#39;</span><span class="p">],</span>
+                                          <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;comment&#39;</span><span class="p">]})</span>
+
+        <span class="c1"># save_item(dataset, {&#39;var_name&#39;: &#39;width&#39;, &#39;dimension&#39;: (&#39;time&#39;, &#39;height&#39;),</span>
+        <span class="c1">#                     &#39;arr&#39;: .corr_width_reg[:].filled(), &#39;long_name&#39;: &quot;Spectral width&quot;,</span>
+        <span class="c1">#                     &#39;comment&#39;: &quot;Wind profiler spectral width (standard deviation) corrected by cloud radar (only Bragg contribution)&quot;,</span>
+        <span class="c1">#                     &#39;units&#39;: &quot;m s-1&quot;, &#39;units_html&#39;: &quot;m s&lt;sup&gt;-1&lt;/sup&gt;&quot;,</span>
+        <span class="c1">#                     &#39;missing_value&#39;: -99., &#39;plot_range&#39;: (0.01, 4.),</span>
+        <span class="c1">#                     &#39;plot_scale&#39;: &quot;logarithmic&quot;})</span>
+
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;output_meta.toml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_meta</span><span class="p">:</span>
+            <span class="n">meta_info</span> <span class="o">=</span> <span class="n">toml</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">output_meta</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+        <span class="n">dataset</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;trace_source trajectory&quot;</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;station&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;moving&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;station&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;station&#39;</span><span class="p">][</span><span class="s1">&#39;moving&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">dataset</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;Moving Platform!&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dataset</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;station&#39;</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;station&#39;</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">institution</span> <span class="o">=</span> <span class="n">meta_info</span><span class="p">[</span><span class="s2">&quot;institution&quot;</span><span class="p">]</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">authors</span> <span class="o">=</span> <span class="n">meta_info</span><span class="p">[</span><span class="s2">&quot;authors&quot;</span><span class="p">]</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">contact</span> <span class="o">=</span> <span class="n">meta_info</span><span class="p">[</span><span class="s2">&quot;contact&quot;</span><span class="p">]</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">creation_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M UTC&quot;</span><span class="p">)</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">day</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">day</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">month</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">month</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">year</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="trajectory"><a class="viewcode-back" href="../../api_overview.html#trace_source.hysplit.trajectory">[docs]</a><span class="k">class</span> <span class="nc">trajectory</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    handle a single trajectory</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        config (dict): content of the config file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stat_ls</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stat_gn</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+        
+        
+<div class="viewcode-block" id="trajectory.load_file"><a class="viewcode-back" href="../../api_overview.html#trace_source.hysplit.trajectory.load_file">[docs]</a>    <span class="k">def</span> <span class="nf">load_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;load a trajectory from the .tdump file</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            filename (str): path and name of the file</span>
+<span class="sd">            silent (bool, optional): verbose output or not</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;filename&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="c1">#parameters_key = [&quot;PRESSURE&quot;, &quot;AIR_TEMP&quot;, &quot;RAINFALL&quot;, &quot;RELHUMID&quot;, &quot;TERR_MSL&quot;]</span>
+        <span class="n">parameters_key</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PRESSURE&quot;</span><span class="p">,</span> <span class="s2">&quot;AIR_TEMP&quot;</span><span class="p">,</span> <span class="s2">&quot;RAINFALL&quot;</span><span class="p">,</span> <span class="s2">&quot;MIXDEPTH&quot;</span><span class="p">,</span> <span class="s2">&quot;RELHUMID&quot;</span><span class="p">,</span> <span class="s2">&quot;TERR_MSL&quot;</span><span class="p">]</span>
+
+        <span class="c1"># empty dict for the ensemble trajectories</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;latitude&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;longitude&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                                    <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;height&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="p">[]})</span>
+        
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">header</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s1">&#39;PRESSURE&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="c1">#header = [f.readline().strip() for i in range(7)]</span>
+            <span class="n">int_info</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="mi">2</span>
+            <span class="n">no_traj</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">header</span><span class="p">[</span><span class="n">int_info</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">no_traj</span><span class="p">,</span> <span class="mi">241</span><span class="p">))</span>
+            <span class="n">arr</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="o">-</span><span class="mf">999.</span><span class="p">)</span>
+            <span class="n">arrp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">no_traj</span><span class="p">,</span> <span class="mi">241</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+            <span class="n">arrp</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="o">-</span><span class="mf">999.</span><span class="p">)</span>
+            <span class="n">arr_data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;latitude&#39;</span><span class="p">:</span><span class="n">arr</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="s1">&#39;longitude&#39;</span><span class="p">:</span><span class="n">arr</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+                        <span class="s1">&#39;height&#39;</span><span class="p">:</span><span class="n">arr</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="s1">&#39;parameters&#39;</span><span class="p">:</span><span class="n">arrp</span><span class="o">.</span><span class="n">copy</span><span class="p">()}</span>
+
+            <span class="n">idx_traj</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">row_contents</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="c1"># print(row_contents)</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row_contents</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">row_contents</span><span class="p">[</span><span class="mi">8</span><span class="p">])))</span>
+                <span class="c1"># fill missing steps</span>
+
+                <span class="c1">#print(datetime.datetime.strptime(&#39;-&#39;.join(row_contents[2:7]), &#39;%y-%m-%d-%H-%M&#39;))</span>
+                <span class="c1">#data[k][&#39;time&#39;].append(datetime.datetime.strptime(&#39;-&#39;.join(row_contents[2:7]), &#39;%y-%m-%d-%H-%M&#39;))</span>
+                <span class="c1">#print(&#39;age&#39;, row_contents[8])</span>
+                <span class="n">arr_data</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">][</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row_contents</span><span class="p">[</span><span class="mi">9</span><span class="p">])</span>
+                <span class="n">arr_data</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">][</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row_contents</span><span class="p">[</span><span class="mi">10</span><span class="p">])</span>
+                <span class="n">arr_data</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">][</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">row_contents</span><span class="p">[</span><span class="mi">11</span><span class="p">])</span>
+                <span class="c1">#print([float(elem) for elem in row_contents[12:]])</span>
+                <span class="n">arr_data</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">row_contents</span><span class="p">[</span><span class="mi">12</span><span class="p">:]]</span>
+
+
+        <span class="n">infostring</span> <span class="o">=</span> <span class="n">header</span><span class="p">[</span><span class="n">int_info</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">year</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">infostring</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                                               <span class="nb">int</span><span class="p">(</span><span class="n">infostring</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">int</span><span class="p">(</span><span class="n">infostring</span><span class="p">[</span><span class="mi">3</span><span class="p">])),</span>
+                     <span class="s1">&#39;lat&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">infostring</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span> <span class="s1">&#39;lon&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">infostring</span><span class="p">[</span><span class="mi">5</span><span class="p">]),</span>
+                     <span class="s1">&#39;height&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">infostring</span><span class="p">[</span><span class="mi">6</span><span class="p">]),</span> <span class="s1">&#39;no_traj&#39;</span><span class="p">:</span> <span class="n">no_traj</span><span class="p">}</span>
+
+        <span class="n">age</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">241</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;date&#39;</span><span class="p">]</span><span class="o">+</span><span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">h</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">age</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">28</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">time</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="n">age</span><span class="p">,</span>
+                            <span class="s1">&#39;latitude&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_equal</span><span class="p">(</span><span class="n">arr_data</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">][</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span> <span class="o">-</span><span class="mf">999.</span><span class="p">),</span>
+                            <span class="s1">&#39;longitude&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_equal</span><span class="p">(</span><span class="n">arr_data</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">][</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span> <span class="o">-</span><span class="mf">999.</span><span class="p">),</span>
+                            <span class="s1">&#39;height&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_equal</span><span class="p">(</span><span class="n">arr_data</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">][</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:],</span> <span class="o">-</span><span class="mf">999.</span><span class="p">)}</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters_key</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_equal</span><span class="p">(</span><span class="n">arr_data</span><span class="p">[</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">],</span> <span class="o">-</span><span class="mf">999.</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;trajectory data&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="trajectory.load_dict"><a class="viewcode-back" href="../../api_overview.html#trace_source.hysplit.trajectory.load_dict">[docs]</a>    <span class="k">def</span> <span class="nf">load_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;load the trajectory without the original data</span>
+<span class="sd">        </span>
+<span class="sd">        .. note::</span>
+<span class="sd">            only the first member of a ensemble is saved</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            d (dict)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;info&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]}</span></div>
+
+
+<div class="viewcode-block" id="trajectory.load_netcdf"><a class="viewcode-back" href="../../api_overview.html#trace_source.hysplit.trajectory.load_netcdf">[docs]</a>    <span class="k">def</span> <span class="nf">load_netcdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ncf</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        load the trajectory at a given datetime and height from the provided netcdf file</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ncf (:obj:netCDF4.Dataset): netcdf4 Dataset to add</span>
+<span class="sd">            dt: datetime of trajectory to load</span>
+<span class="sd">            height: height of trajectory to load</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict with data</span>
+
+<span class="sd">            Keys: ``time``, ``age``, ``latitude``, ``longitude``, ``height``</span>
+
+<span class="sd">            Optional ``pressure``, ``air_tem``, ``rainfall``, ``relhumid``, ``terr_msl``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;info&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;date&#39;</span><span class="p">:</span> <span class="n">dt</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">:</span> <span class="n">height</span><span class="p">,</span>
+                     <span class="s1">&#39;lat&#39;</span><span class="p">:</span> <span class="n">ncf</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;lon&#39;</span><span class="p">:</span> <span class="n">ncf</span><span class="o">.</span><span class="n">coordinates</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span>
+
+        <span class="n">dt_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="k">for</span> <span class="n">time</span> <span class="ow">in</span> <span class="n">ncf</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">][:]]</span>
+        <span class="n">it</span> <span class="o">=</span> <span class="n">dt_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+        <span class="n">ih</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ncf</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;range&quot;</span><span class="p">][:]</span> <span class="o">==</span> <span class="n">height</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">traj_time</span> <span class="o">=</span> <span class="p">[</span><span class="n">dt</span> <span class="o">-</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="nb">abs</span><span class="p">(</span><span class="n">h</span><span class="p">))</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">ncf</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">][:]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">traj_time</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="n">ncf</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">][:],</span>
+                     <span class="s1">&#39;latitude&#39;</span><span class="p">:</span> <span class="n">ncf</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">][</span><span class="n">it</span><span class="p">,</span> <span class="n">ih</span><span class="p">,</span> <span class="p">:][</span><span class="mi">0</span><span class="p">],</span>
+                     <span class="s1">&#39;longitude&#39;</span><span class="p">:</span> <span class="n">ncf</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">][</span><span class="n">it</span><span class="p">,</span> <span class="n">ih</span><span class="p">,</span> <span class="p">:][</span><span class="mi">0</span><span class="p">],</span>
+                     <span class="s1">&#39;height&#39;</span><span class="p">:</span> <span class="n">ncf</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="s1">&#39;traj_height&#39;</span><span class="p">][</span><span class="n">it</span><span class="p">,</span> <span class="n">ih</span><span class="p">,</span> <span class="p">:][</span><span class="mi">0</span><span class="p">]}</span>
+
+        <span class="n">parameters_key</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PRESSURE&quot;</span><span class="p">,</span> <span class="s2">&quot;AIR_TEMP&quot;</span><span class="p">,</span> <span class="s2">&quot;RAINFALL&quot;</span><span class="p">,</span> <span class="s2">&quot;RELHUMID&quot;</span><span class="p">,</span> <span class="s2">&quot;TERR_MSL&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parameters_key</span><span class="p">):</span>
+            <span class="n">d</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="n">param</span><span class="p">]</span> <span class="o">=</span> <span class="n">ncf</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">param</span><span class="o">.</span><span class="n">lower</span><span class="p">()][</span><span class="n">it</span><span class="p">,</span> <span class="n">ih</span><span class="p">,</span> <span class="p">:][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_dict</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">d</span></div>
+
+
+<div class="viewcode-block" id="trajectory.add_land_sfc"><a class="viewcode-back" href="../../api_overview.html#trace_source.hysplit.trajectory.add_land_sfc">[docs]</a>    <span class="k">def</span> <span class="nf">add_land_sfc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; add the land surface information to a single trajectory</span>
+<span class="sd">            </span>
+<span class="sd">        Args:</span>
+<span class="sd">            ls (:class:`trace_source.land_sfc.land_sfc`, optional): pre loaded land surface information</span>
+<span class="sd">                (separate loading consumes lot of time)</span>
+<span class="sd">            silent (bool, optional): verbose output or not</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">ls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ls</span> <span class="o">=</span> <span class="n">trace_source</span><span class="o">.</span><span class="n">land_sfc</span><span class="o">.</span><span class="n">land_sfc</span><span class="p">()</span>
+
+
+        <span class="n">occ_stat</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;occ_stat&#39;</span><span class="p">,</span> <span class="s1">&#39;no_below counter&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">rh</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">][</span><span class="s1">&#39;reception&#39;</span><span class="p">]:</span>
+            <span class="n">category</span> <span class="o">=</span> <span class="n">ls</span><span class="o">.</span><span class="n">get_land_sfc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;latitude&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;longitude&#39;</span><span class="p">])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">category</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span> <span class="k">else</span> <span class="kc">None</span>
+
+            <span class="k">if</span> <span class="n">rh</span> <span class="o">==</span> <span class="s1">&#39;md&#39;</span><span class="p">:</span>
+                <span class="n">cat</span> <span class="o">=</span> <span class="n">category</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;height&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;MIXDEPTH&#39;</span><span class="p">]]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cat</span> <span class="o">=</span> <span class="n">category</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;height&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="nb">float</span><span class="p">(</span><span class="n">rh</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="p">]</span>
+
+            <span class="n">no</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">cat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">cat</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">no</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ls</span><span class="o">.</span><span class="n">categories</span><span class="o">.</span><span class="n">keys</span><span class="p">())}</span>
+            <span class="k">if</span> <span class="n">rh</span> <span class="o">!=</span> <span class="s1">&#39;md&#39;</span><span class="p">:</span>
+                <span class="n">rh_string</span> <span class="o">=</span> <span class="n">rh</span> <span class="o">+</span> <span class="s1">&#39;km&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rh_string</span> <span class="o">=</span> <span class="n">rh</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stat_ls</span><span class="p">[</span><span class="s1">&#39;occ_below&#39;</span><span class="o">+</span><span class="n">rh_string</span><span class="p">]</span> <span class="o">=</span> <span class="n">occ_stat</span><span class="p">(</span><span class="n">no_below</span><span class="o">=</span><span class="n">no</span><span class="p">,</span> <span class="n">counter</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;occ_one &#39;</span><span class="p">,</span> <span class="n">occ_belowmd</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;occ_one &#39;</span><span class="p">,</span> <span class="n">occ_below2km</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span> <span class="k">else</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="trajectory.add_ensemble_land_sfc"><a class="viewcode-back" href="../../api_overview.html#trace_source.hysplit.trajectory.add_ensemble_land_sfc">[docs]</a>    <span class="k">def</span> <span class="nf">add_ensemble_land_sfc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; add the land surface information to an ensemble trajectory</span>
+<span class="sd">            </span>
+<span class="sd">        Args:</span>
+<span class="sd">            ls (:class:`trace_source.land_sfc.land_sfc`, optional): pre loaded land surface information</span>
+<span class="sd">                (separate loading consumes lot of time)</span>
+<span class="sd">            silent (bool, optional): verbose output or not</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">ls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ls</span> <span class="o">=</span> <span class="n">trace_source</span><span class="o">.</span><span class="n">land_sfc</span><span class="o">.</span><span class="n">land_sfc</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;no_traj&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;tried to call add_ensemble_land_sfc with single traj&#39;</span><span class="p">)</span>
+
+        <span class="n">occ_stat</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;occ_stat&#39;</span><span class="p">,</span> <span class="s1">&#39;no_below counter&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">rh</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">][</span><span class="s1">&#39;reception&#39;</span><span class="p">]:</span>
+            <span class="n">categories</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,))</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">category</span> <span class="o">=</span> <span class="n">ls</span><span class="o">.</span><span class="n">get_land_sfc</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">],</span>
+                                           <span class="n">v</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">rh</span> <span class="o">==</span> <span class="s1">&#39;md&#39;</span><span class="p">:</span>
+                    <span class="n">cat</span> <span class="o">=</span> <span class="n">category</span><span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;MIXDEPTH&#39;</span><span class="p">]]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">cat</span> <span class="o">=</span> <span class="n">category</span><span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="nb">float</span><span class="p">(</span><span class="n">rh</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="p">]</span>
+                <span class="n">categories</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">categories</span><span class="p">,</span> <span class="n">cat</span><span class="p">)</span>
+
+            <span class="n">no</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">categories</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">categories</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">categories</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">no</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ls</span><span class="o">.</span><span class="n">categories</span><span class="o">.</span><span class="n">keys</span><span class="p">())}</span>
+            <span class="k">if</span> <span class="n">rh</span> <span class="o">!=</span> <span class="s1">&#39;md&#39;</span><span class="p">:</span>
+                <span class="n">rh_string</span> <span class="o">=</span> <span class="n">rh</span> <span class="o">+</span> <span class="s1">&#39;km&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rh_string</span> <span class="o">=</span> <span class="n">rh</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stat_ls</span><span class="p">[</span><span class="s1">&#39;occ_ens_below&#39;</span> <span class="o">+</span> <span class="n">rh_string</span><span class="p">]</span> <span class="o">=</span> <span class="n">occ_stat</span><span class="p">(</span><span class="n">no_below</span><span class="o">=</span><span class="n">no</span><span class="p">,</span> <span class="n">counter</span><span class="o">=</span><span class="n">c</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="trajectory.add_ensemble_geo_names"><a class="viewcode-back" href="../../api_overview.html#trace_source.hysplit.trajectory.add_ensemble_geo_names">[docs]</a>    <span class="k">def</span> <span class="nf">add_ensemble_geo_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ng</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        add the geographical names to a ensemble trajectory</span>
+<span class="sd">            </span>
+<span class="sd">        Args:</span>
+<span class="sd">            ng (:class:`trace_source.land_sfc.named_geography`, optional): pre loaded named geography information</span>
+<span class="sd">                (separate loading consumes lot of time)</span>
+<span class="sd">            silent (bool, optional): verbose output or not</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">ng</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ng</span> <span class="o">=</span> <span class="n">trace_source</span><span class="o">.</span><span class="n">land_sfc</span><span class="o">.</span><span class="n">named_geography</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;geonames&#39;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;no_traj&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;tried to call add_ensemble_land_sfc with single traj&#39;</span><span class="p">)</span>
+
+        <span class="n">occ_stat</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;occ_stat&#39;</span><span class="p">,</span> <span class="s1">&#39;no_below counter&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">rh</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">][</span><span class="s1">&#39;reception&#39;</span><span class="p">]:</span>
+            <span class="n">categories</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,))</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">category</span> <span class="o">=</span> <span class="n">ng</span><span class="o">.</span><span class="n">get_geo_names</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">&#39;latitude&#39;</span><span class="p">],</span> 
+                                        <span class="n">v</span><span class="p">[</span><span class="s1">&#39;longitude&#39;</span><span class="p">])</span> 
+                <span class="k">if</span> <span class="n">rh</span> <span class="o">==</span> <span class="s1">&#39;md&#39;</span><span class="p">:</span>
+                    <span class="n">cat</span> <span class="o">=</span> <span class="n">category</span><span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;MIXDEPTH&#39;</span><span class="p">]]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">cat</span> <span class="o">=</span> <span class="n">category</span><span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="nb">float</span><span class="p">(</span><span class="n">rh</span><span class="p">)</span><span class="o">*</span><span class="mi">1000</span><span class="p">]</span>
+                <span class="n">categories</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">categories</span><span class="p">,</span> <span class="n">cat</span><span class="p">)</span>
+
+            <span class="n">no</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">categories</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">categories</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">categories</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">no</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ng</span><span class="o">.</span><span class="n">geo_names</span><span class="o">.</span><span class="n">keys</span><span class="p">())}</span>
+            <span class="k">if</span> <span class="n">rh</span> <span class="o">!=</span> <span class="s1">&#39;md&#39;</span><span class="p">:</span>
+                <span class="n">rh_string</span> <span class="o">=</span> <span class="n">rh</span> <span class="o">+</span> <span class="s1">&#39;km&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rh_string</span> <span class="o">=</span> <span class="n">rh</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stat_gn</span><span class="p">[</span><span class="s1">&#39;region_ens_below&#39;</span> <span class="o">+</span> <span class="n">rh_string</span><span class="p">]</span> <span class="o">=</span> <span class="n">occ_stat</span><span class="p">(</span><span class="n">no_below</span><span class="o">=</span><span class="n">no</span><span class="p">,</span> <span class="n">counter</span><span class="o">=</span><span class="n">c</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="trajectory.add_area_land_sfc"><a class="viewcode-back" href="../../api_overview.html#trace_source.hysplit.trajectory.add_area_land_sfc">[docs]</a>    <span class="k">def</span> <span class="nf">add_area_land_sfc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxheight</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        land use inside an area around the trajectory</span>
+
+
+
+<span class="sd">        add the shape to ``self.shapes[&#39;shp_below{:.1f}km&#39;]``</span>
+
+<span class="sd">        and the statistics to ``self.stat_ls[&#39;occ_shp_below{:.1f}km&#39;]``</span>
+
+<span class="sd">        sizes of circle (in 24h steps):</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">           [ 0.05      ,  0.15      ,  0.4       ,  0.77666667,  1.25666667,</span>
+<span class="sd">            1.81666667,  2.43333333,  3.08333333,  3.74333333,  4.39      ,  5.]</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            maxheight: maximum height in meters or md for MIXDEPTH</span>
+<span class="sd">            ls (:class:`trace_source.land_sfc.land_sfc`, optional): pre loaded land surface information</span>
+<span class="sd">                (separate loading consumes lot of time)</span>
+<span class="sd">            silent (bool, optional): verbose output or not</span>
+
+<span class="sd">        .. deprecated:: 0.1</span>
+<span class="sd">            use the ensemble trajectories instead</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="kn">import</span> <span class="nn">shapely.geometry</span> <span class="k">as</span> <span class="nn">sgeom</span>
+        <span class="kn">from</span> <span class="nn">shapely.ops</span> <span class="k">import</span> <span class="n">cascaded_union</span>
+
+        <span class="k">if</span> <span class="n">maxheight</span> <span class="o">==</span> <span class="s1">&#39;md&#39;</span><span class="p">:</span>
+            <span class="n">maxheight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;MIXDEPTH&#39;</span><span class="p">]</span>
+            <span class="n">maxheightstr</span> <span class="o">=</span> <span class="s1">&#39;md&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">maxheightstr</span> <span class="o">=</span> <span class="s1">&#39;{:.1f}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">maxheight</span><span class="o">/</span><span class="mf">1000.</span><span class="p">)</span>
+
+        <span class="n">lat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;latitude&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;height&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">maxheight</span><span class="p">]</span>
+        <span class="n">lon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;longitude&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;height&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">maxheight</span><span class="p">]</span>
+        <span class="n">age</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;age&#39;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;height&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">maxheight</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">lat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">age</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mf">5.</span><span class="o">/</span><span class="mi">240</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">poly1d</span><span class="p">([</span> <span class="o">-</span><span class="mf">2.81314300e-07</span><span class="p">,</span> <span class="mf">1.50462963e-04</span><span class="p">,</span> <span class="mf">7.17592593e-04</span><span class="p">,</span> <span class="mf">5.00000000e-02</span><span class="p">])</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">p</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">age</span><span class="p">))</span>
+            <span class="n">r</span><span class="p">[</span><span class="n">r</span><span class="o">&lt;</span><span class="mf">0.05</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.05</span>
+
+            <span class="c1">#track = sgeom.LineString(zip(lon, lat))</span>
+            <span class="c1">#track = track.buffer(0.1)</span>
+
+            <span class="n">shape</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">r</span><span class="p">):</span>
+                <span class="n">shape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sgeom</span><span class="o">.</span><span class="n">Point</span><span class="p">(</span><span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="n">coord</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+
+            <span class="c1">#shape.append(track)</span>
+            <span class="n">shape</span> <span class="o">=</span> <span class="n">cascaded_union</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+
+            <span class="c1"># check if shape is a Polygon; if yes convert it to Multipolygon</span>
+            <span class="k">if</span> <span class="n">shape</span><span class="o">.</span><span class="n">geom_type</span> <span class="o">==</span> <span class="s1">&#39;Polygon&#39;</span><span class="p">:</span>
+                <span class="n">shape</span> <span class="o">=</span> <span class="n">sgeom</span><span class="o">.</span><span class="n">MultiPolygon</span><span class="p">([</span><span class="n">shape</span><span class="p">])</span>
+
+
+
+            <span class="k">if</span> <span class="n">ls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ls</span> <span class="o">=</span> <span class="n">trace_source</span><span class="o">.</span><span class="n">land_sfc</span><span class="o">.</span><span class="n">land_sfc</span><span class="p">()</span>
+
+            <span class="n">occ_stat</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;occ_stat&#39;</span><span class="p">,</span> <span class="s1">&#39;no_below counter&#39;</span><span class="p">)</span>
+            <span class="n">cat</span> <span class="o">=</span> <span class="n">ls</span><span class="o">.</span><span class="n">get_land_sfc_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">compressed</span><span class="p">()</span>
+            <span class="n">no</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">cat</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span><span class="p">:</span> <span class="n">cat</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">no</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">ls</span><span class="o">.</span><span class="n">categories</span><span class="o">.</span><span class="n">keys</span><span class="p">())}</span>
+
+            <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;shp_below{}km&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">maxheightstr</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shapes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">shape</span>
+
+            <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;occ_shp_below{}km&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">maxheightstr</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stat_ls</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">occ_stat</span><span class="p">(</span><span class="n">no_below</span><span class="o">=</span><span class="n">no</span><span class="p">,</span> <span class="n">counter</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">shape</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1">#print(&#39;! nothin below &#39;, maxheight)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;! nothin below &#39;</span><span class="p">)</span></div>
+            <span class="c1"># how do we treat this?</span>
+
+
+        
+<div class="viewcode-block" id="trajectory.evaluate"><a class="viewcode-back" href="../../api_overview.html#trace_source.hysplit.trajectory.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        adds some general statistic to a single trajectory</span>
+
+<span class="sd">        Keys: ``Tmin_whole``, ``Precip_whole``, ``RHmax_whole``, ``Tmin_24h``, ``Precip_24h``,</span>
+<span class="sd">        ``RHmax24h``, ``min_height_ag``, ``traj_distance_total``, ``mean_bearing_from_endpoint``</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            silent (bool, optional): verbose output or not</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s1">&#39;Tmin_whole&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;AIR_TEMP&#39;</span><span class="p">][:]</span><span class="o">-</span><span class="mf">273.15</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s1">&#39;Precip_whole&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;RAINFALL&#39;</span><span class="p">][:])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s1">&#39;RHmax_whole&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;RELHUMID&#39;</span><span class="p">][:])</span>
+
+        <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;age&#39;</span><span class="p">]</span><span class="o">==-</span><span class="mi">24</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s1">&#39;Tmin_24h&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;AIR_TEMP&#39;</span><span class="p">][:</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mf">273.15</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s1">&#39;Precip_24h&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;RAINFALL&#39;</span><span class="p">][:</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s1">&#39;RHmax_24h&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;RELHUMID&#39;</span><span class="p">][:</span><span class="n">index</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s1">&#39;min_height_ag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;height&#39;</span><span class="p">])</span>
+
+        <span class="c1"># distance between two points</span>
+        <span class="c1"># bearing to start point</span>
+        <span class="n">dist</span><span class="p">,</span> <span class="n">angle</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="n">endcoord</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;latitude&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;longitude&#39;</span><span class="p">]))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)):</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">trace_source</span><span class="o">.</span><span class="n">helpers</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">coords</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">coords</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">trace_source</span><span class="o">.</span><span class="n">helpers</span><span class="o">.</span><span class="n">calculate_initial_angle</span><span class="p">(</span><span class="n">endcoord</span><span class="p">,</span> <span class="n">coords</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">dist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+            <span class="n">angle</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;total range&#39;</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">dist</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s1">&#39;traj_distance_total&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
+
+        <span class="n">comp_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">angle</span><span class="p">))</span>
+        <span class="n">mean_angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">comp_angle</span><span class="o">.</span><span class="n">real</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">comp_angle</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+        <span class="n">mean_bear</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">mean_angle</span><span class="p">,</span> <span class="n">deg</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">+</span> <span class="mi">360</span><span class="p">)</span> <span class="o">%</span> <span class="mi">360</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;mean bear &#39;</span><span class="p">,</span> <span class="n">mean_bear</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s1">&#39;mean_bearing_from_endpoint&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean_bear</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;statistics&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">silent</span> <span class="k">else</span> <span class="kc">None</span></div></div>
+
+
+        
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="c1">#traj = trajectory()</span>
+    <span class="c1">#traj.load_file(&#39;../prior_examples/test_trajectories/hysplit_trajectory-20170225-00-34_677-33_038-4500_0-240.tdump&#39;)</span>
+
+    <span class="c1"># traj = trajectory()</span>
+    <span class="c1"># traj.load_file(&#39;../prior_examples/trajectories_limassol/hysplit_trajectory-20170225-03-34_677-33_038-1500_0-240.tdump&#39;)</span>
+    <span class="c1"># traj.add_land_sfc()</span>
+    <span class="c1"># traj.add_ensemble_land_sfc()</span>
+
+    <span class="n">traj</span> <span class="o">=</span> <span class="n">trajectory</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="s1">&#39;../config_macca.toml&#39;</span><span class="p">)</span>
+    <span class="c1">#traj.load_file(&#39;../prior_examples/trajectories_barbados/hysplit_trajectory-20140223-21-13_15--59_26-10500_0-240.tdump&#39;)</span>
+    <span class="c1">#traj.load_file(&#39;../prior_examples/trajectories_limassol/hysplit_trajectory-20170304-12-34_677-33_038-12000_0-240.tdump&#39;)</span>
+    <span class="n">traj</span><span class="o">.</span><span class="n">load_file</span><span class="p">(</span><span class="s1">&#39;../prior_examples/trajectories_macca/hysplit_trajectory-20160531-15--54_6199-158_861-3000_0-240.tdump&#39;</span><span class="p">)</span>
+    <span class="n">plot_trajectories_ens</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="s1">&#39;../prior_examples/plots&#39;</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Martin Radenz.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

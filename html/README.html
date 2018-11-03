@@ -1,0 +1,370 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>trace: trajectory analysis tool &mdash; trace 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="trace 0.1 documentation" href="index.html"/>
+        <link rel="next" title="api documentation" href="api_overview.html"/>
+        <link rel="prev" title="trace doc" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> trace
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setup">Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#local-python-installataion">local python installataion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#docker-container">docker container</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hysplit-input-data">HYSPLIT input data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#surface-classification">Surface classification</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#modis-land-cover">MODIS land cover</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#named-geography">“named geography”</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#config-files">config files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#used-in">Used in</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#license">License</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api_overview.html">api documentation</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">trace</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>trace: trajectory analysis tool</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/README.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="trace-trajectory-analysis-tool">
+<span id="trace-trajectory-analysis-tool"></span><h1>trace: trajectory analysis tool<a class="headerlink" href="#trace-trajectory-analysis-tool" title="Permalink to this headline">¶</a></h1>
+<p>Ensemble backward trajectories are combined with a land cover classification for a temporally and vertically resolved airmass source attribution. At first, a 27-member ensemble of 10-day backward trajectories is calculated using HYSPLIT (Stein et al., 2015). Meteorological input data for HYSPLIT are taken from the GDAS1 dataset (<a class="reference external" href="https://www.ready.noaa.gov/gdas1.php">https://www.ready.noaa.gov/gdas1.php</a>) provided by the Air Resources Laboratory (ARL) of the U.S. National Weather Service’s National Centers for Environmental Prediction (NCEP). Each ensemble is generated using a small spatial offset in the trajectory endpoint. Whenever a trajectory is below the mixing depth provided in the GDAS1 data (“reception height”), the land cover is categorized using custom defined polygons according to land mass boundaries or a simplified version (number of categories reduced to 7) of the MODIS land cover classification (Friedl et al., 2002, Broxton et al., 2014). Hence, an airparcel is assumed to be influenced by the land surface if the trajectory is below the mixing depth. The residence time for each category is then the total time an airparcel fulfilled this criterion by land cover category. This calculation is repeated in steps of 3h in time and 500m in height to provide a continuous estimate on the airmass source and as a first hint on potential aerosol load.
+From the results a time-height plot of airmass source can be generated for a certain location, which is comparable to active remote sensing time-height plots.</p>
+<div class="section" id="examples">
+<span id="examples"></span><h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p><img alt="" src="_images/20180324_12_03000_trajectories_map.png" />
+<img alt="" src="_images/20180324_limassol_multi-geonames-abs-region-ens-belowmd.png" />
+<img alt="" src="_images/20180324_limassol_multi-land-use-abs-occ-ens-belowmd.png" /></p>
+</div>
+<div class="section" id="setup">
+<span id="setup"></span><h2>Setup<a class="headerlink" href="#setup" title="Permalink to this headline">¶</a></h2>
+<p>trace is written in python3 and requires an extensive of additional packages. There are two options to acquire these packages.</p>
+<div class="section" id="local-python-installataion">
+<span id="local-python-installataion"></span><h3>local python installataion<a class="headerlink" href="#local-python-installataion" title="Permalink to this headline">¶</a></h3>
+<p>Install all the packages listed in <a class="reference external" href="requirements.txt">requirements.txt</a></p>
+</div>
+<div class="section" id="docker-container">
+<span id="docker-container"></span><h3>docker container<a class="headerlink" href="#docker-container" title="Permalink to this headline">¶</a></h3>
+<p>Deployment may be simplified using a docker image which includes all the dependencies.
+A Dockerfile is included in this repository.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre># build the Dockerfile
+docker build -t trace_env .
+# run an interactive bash on this image
+docker run -v `pwd`:/trace -it trace_env /bin/bash
+</pre></div>
+</div>
+<p>Please put your credentials in the <code class="docutils literal notranslate"><span class="pre">output_meta.toml</span></code> file.</p>
+</div>
+</div>
+<div class="section" id="usage">
+<span id="usage"></span><h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>Running trace consists of several steps, that are automated in the <code class="docutils literal notranslate"><span class="pre">autorun.sh</span></code> script.</p>
+<p>Generating the a list of trajectories that are required, i.e. an input file for HYSPLIT:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="n">python3</span> <span class="n">gen_hysplit_input</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">station</span> <span class="p">[</span><span class="n">stationname</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>After the HYSPLIT output is on hand, it can be checked if all required files are available:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="n">python3</span> <span class="n">test_data_avail</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">station</span> <span class="p">[</span><span class="n">stationname</span><span class="p">]</span> <span class="o">--</span><span class="n">daterange</span> <span class="p">[</span><span class="n">YYYYMMDD_begin</span><span class="o">-</span><span class="n">YYYYMMDD_end</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The actual processing is started with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="n">python3</span> <span class="n">run_assemble_hysplit</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">station</span> <span class="p">[</span><span class="n">stationname</span><span class="p">]</span> <span class="o">--</span><span class="n">daterange</span> <span class="p">[</span><span class="n">YYYYMMDD_begin</span><span class="o">-</span><span class="n">YYYYMMDD_end</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>From the netcdf files in the <code class="docutils literal notranslate"><span class="pre">output</span></code> directory the plots are generated by:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="n">python3</span> <span class="n">plot2d</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">station</span> <span class="p">[</span><span class="n">stationname</span><span class="p">]</span> <span class="o">--</span><span class="n">daterange</span> <span class="p">[</span><span class="n">YYYYMMDD_begin</span><span class="o">-</span><span class="n">YYYYMMDD_end</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Afterwards the files with the raw trajectires can be compressed to day-wise zip files:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="n">python3</span> <span class="n">compress_data</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">station</span> <span class="p">[</span><span class="n">stationname</span><span class="p">]</span> <span class="o">--</span><span class="n">daterange</span> <span class="p">[</span><span class="n">YYYYMMDD_begin</span><span class="o">-</span><span class="n">YYYYMMDD_end</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="hysplit-input-data">
+<span id="hysplit-input-data"></span><h2>HYSPLIT input data<a class="headerlink" href="#hysplit-input-data" title="Permalink to this headline">¶</a></h2>
+<p>HYSPLIT ensemble backward trajectories are required. Please note that HYSPLIT itself is not provided within this package (The binary to run is <code class="docutils literal notranslate"><span class="pre">hyts_ens</span></code> with the respective <code class="docutils literal notranslate"><span class="pre">CONTROL</span></code> file).
+In the default setup 10 days with a temporal resolution of 1h. Such an trajectory is calculated every 3h in steps of 500m. Conveniently the input trajectories are placed in the <code class="docutils literal notranslate"><span class="pre">trajectories</span></code> directory.</p>
+<p>The filename of each trajectory should be
+hysplit_trajectory-[YYYYMMDD-HH]-[lat]-[lon]-[height]-[length].tdump</p>
+<p>SETUP.CFG</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="o">&amp;</span><span class="n">SETUP</span>
+<span class="n">KMSL</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="n">tm_rain</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="n">tm_tpot</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="n">tm_tamb</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="n">tm_mixd</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="n">tm_relh</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="n">tm_terr</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="n">dxf</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+<span class="n">dyf</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+<span class="n">dzf</span><span class="o">=</span><span class="mf">0.008</span><span class="p">,</span>
+<span class="o">/</span>
+</pre></div>
+</div>
+<p>TRAJ.CFG</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span class="o">&amp;</span><span class="n">SETUP</span>
+<span class="n">tratio</span> <span class="o">=</span> <span class="mf">0.75</span><span class="p">,</span>
+<span class="n">delt</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="n">mgmin</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+<span class="n">khmax</span> <span class="o">=</span> <span class="mi">9999</span><span class="p">,</span>
+<span class="n">kmixd</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="n">kmsl</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="n">k10m</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="n">nstr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="n">mhrs</span> <span class="o">=</span> <span class="mi">9999</span><span class="p">,</span>
+<span class="n">nver</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="n">tout</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span>
+<span class="n">tm_pres</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="n">tm_tpot</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="n">tm_tamb</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="n">tm_rain</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="n">tm_mixd</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="n">tm_relh</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="n">tm_sphu</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="n">tm_mixr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="n">tm_dswf</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="n">tm_terr</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="n">dxf</span> <span class="o">=</span> <span class="mf">0.40</span><span class="p">,</span>
+<span class="n">dyf</span> <span class="o">=</span> <span class="mf">0.40</span><span class="p">,</span>
+<span class="n">dzf</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+<span class="n">messg</span> <span class="o">=</span> <span class="s1">&#39;MESSAGE&#39;</span><span class="p">,</span>
+<span class="o">/</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="surface-classification">
+<span id="surface-classification"></span><h2>Surface classification<a class="headerlink" href="#surface-classification" title="Permalink to this headline">¶</a></h2>
+<p>Currently two sources for the surface classification are available. The raster-based MODIS land cover classification and the polygon-based geography names.</p>
+<div class="section" id="modis-land-cover">
+<span id="modis-land-cover"></span><h3>MODIS land cover<a class="headerlink" href="#modis-land-cover" title="Permalink to this headline">¶</a></h3>
+<p>The MODIS land cover classification (Friedl et al., 2002, Broxton et al., 2014) with its 17 categories and 0.5km resolution is simplified to 7 categories (barren, snow, urban, grass, savanna/shrublands, forrest, water) and regridded to a 0.1º (~11km).</p>
+<p><img alt="" src="_images/mod_land_use_map.png" /></p>
+</div>
+<div class="section" id="named-geography">
+<span id="named-geography"></span><h3>“named geography”<a class="headerlink" href="#named-geography" title="Permalink to this headline">¶</a></h3>
+<p>The extend and the name of a geography feature - usually a (sub-)continent - is defend within a <code class="docutils literal notranslate"><span class="pre">.kml</span></code> file. Examples for are available in the <code class="docutils literal notranslate"><span class="pre">data</span></code> directory for Europe and the shorelines of the Atlantic Ocean.</p>
+</div>
+</div>
+<div class="section" id="config-files">
+<span id="config-files"></span><h2>config files<a class="headerlink" href="#config-files" title="Permalink to this headline">¶</a></h2>
+<p>Trace can by adjusted by two types of config files. One for the site or campaign named <code class="docutils literal notranslate"><span class="pre">config_[site_name].toml</span></code>. Examples are given for the site of Limassol and the Polarstern cruise PS113.
+The second one - <code class="docutils literal notranslate"><span class="pre">geonames_config.toml</span></code> - is used to wire togehter the named geographies.</p>
+</div>
+<div class="section" id="used-in">
+<span id="used-in"></span><h2>Used in<a class="headerlink" href="#used-in" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Haarig, M., Ansmann, A., Gasteiger, J., Kandler, K., Althausen, D., Baars, H., Radenz, M., and Farrell, D. A.: Dry versus wet marine particle optical properties: RH dependence of depolarization ratio, backscatter, and extinction from multiwavelength lidar measurements during SALTRACE, Atmos. Chem. Phys., 17, 14199-14217, <a class="reference external" href="https://doi.org/10.5194/acp-17-14199-2017">https://doi.org/10.5194/acp-17-14199-2017</a>, 2017.</li>
+</ul>
+</div>
+<div class="section" id="references">
+<span id="references"></span><h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Stein, A.F., R.R. Draxler, G.D. Rolph, B.J. Stunder, M.D. Cohen, and F. Ngan: NOAA’s HYSPLIT Atmospheric Transport and Dispersion Modeling System. Bull. Amer. Meteor. Soc., 96, 2059–2077, <a class="reference external" href="https://doi.org/10.1175/BAMS-D-14-00110.1">https://doi.org/10.1175/BAMS-D-14-00110.1</a>, 2015</li>
+<li>Friedl, M. A., McIver, D. K., Hodges, J. C., Zhang, X. Y., Muchoney, D., Strahler, A. H., Woodcock, C.E., Gopal, S., Schneider, A., Cooper, A., Baccini, A., Gao, F., Schaaf, C.: Global land cover mapping from MODIS: algorithms and early results. Remote Sens. Environ., 83(1-2), 287-302, <a class="reference external" href="https://doi.org/10.1016/S0034-4257(02)00078-0">https://doi.org/10.1016/S0034-4257(02)00078-0</a>, 2002</li>
+<li>Broxton, P.D., Zeng, X., Sulla-Menashe, D., Troch, P.A.: A Global Land Cover Climatology Using MODIS Data. J. Appl. Meteor. Climatol., 53, 1593-1605. <a class="reference external" href="http://dx.doi.org/10.1175/JAMC-D-13-0270.1">http://dx.doi.org/10.1175/JAMC-D-13-0270.1</a>, 2014</li>
+</ul>
+</div>
+<div class="section" id="license">
+<span id="license"></span><h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p>Copyright 2018, Martin Radenz
+<a class="reference external" href="http://www.opensource.org/licenses/mit-license.php">MIT License</a></p>
+<!--
+https://landcover.usgs.gov/global_climatology.php 
+http://journals.ametsoc.org/doi/abs/10.1175/JAMC-D-13-0270.1--></div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api_overview.html" class="btn btn-neutral float-right" title="api documentation" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="trace doc" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Martin Radenz.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
