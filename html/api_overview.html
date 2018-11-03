@@ -1,58 +1,56 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>api documentation &mdash; trace 0.1 documentation</title>
+  <title>api documentation &mdash; trace_airmass_source 0.4 documentation</title>
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
   
 
   
-
-  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="trace 0.1 documentation" href="index.html"/>
-        <link rel="prev" title="trace: trajectory analysis tool" href="README.html"/> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Setup" href="setup.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
-            <a href="index.html" class="icon icon-home"> trace
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> trace_airmass_source
           
 
           
@@ -62,7 +60,7 @@
             
             
               <div class="version">
-                0.1
+                0.4
               </div>
             
           
@@ -79,13 +77,18 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
             
-                <p class="caption"><span class="caption-text">Contents:</span></p>
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Setup</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">api documentation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-trace_source.hysplit">hysplit module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-trace_source.land_sfc">land surface module</a></li>
@@ -97,40 +100,61 @@
             
           
         </div>
+        
       </div>
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">trace</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">trace_airmass_source</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
- 
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
-      
-    <li>api documentation</li>
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>api documentation</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
+            
             <a href="_sources/api_overview.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
@@ -140,304 +164,189 @@
 <h1>api documentation<a class="headerlink" href="#api-documentation" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-trace_source.hysplit">
 <span id="hysplit-module"></span><h2>hysplit module<a class="headerlink" href="#module-trace_source.hysplit" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
+<dl class="py function">
 <dt id="trace_source.hysplit.plot_trajectories_ens">
-<code class="descclassname">trace_source.hysplit.</code><code class="descname">plot_trajectories_ens</code><span class="sig-paren">(</span><em>traj</em>, <em>savepath</em>, <em>ls=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#plot_trajectories_ens"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.plot_trajectories_ens" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">trace_source.hysplit.</code><code class="sig-name descname">plot_trajectories_ens</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">traj</span></em>, <em class="sig-param"><span class="n">savepath</span></em>, <em class="sig-param"><span class="n">ls</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">config</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#plot_trajectories_ens"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.plot_trajectories_ens" title="Permalink to this definition">¶</a></dt>
 <dd><p>plot multiple trajectories into one scene</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>traj</strong> (<a class="reference internal" href="#trace_source.hysplit.trajectory" title="trace_source.hysplit.trajectory"><code class="xref py py-class docutils literal notranslate"><span class="pre">trajectory</span></code></a>) – trajectory to plot instance to plot</li>
-<li><strong>savepath</strong> (<em>str</em>) – path to save</li>
-<li><strong>ls</strong> (<a class="reference internal" href="#trace_source.land_sfc.land_sfc" title="trace_source.land_sfc.land_sfc"><code class="xref py py-class docutils literal notranslate"><span class="pre">trace_source.land_sfc.land_sfc</span></code></a>, optional) – pre loaded land surface information</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>traj</strong> (<a class="reference internal" href="#trace_source.hysplit.trajectory" title="trace_source.hysplit.trajectory"><code class="xref py py-class docutils literal notranslate"><span class="pre">trajectory</span></code></a>) – trajectory to plot instance to plot</p></li>
+<li><p><strong>savepath</strong> (<em>str</em>) – path to save</p></li>
+<li><p><strong>ls</strong> (<a class="reference internal" href="#trace_source.land_sfc.land_sfc" title="trace_source.land_sfc.land_sfc"><code class="xref py py-class docutils literal notranslate"><span class="pre">trace_source.land_sfc.land_sfc</span></code></a>, optional) – pre loaded land surface information</p></li>
+<li><p><strong>config</strong> (<em>dict</em><em>, </em><em>optional</em>) – the toml derived config dict</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="trace_source.hysplit.save_item">
-<code class="descclassname">trace_source.hysplit.</code><code class="descname">save_item</code><span class="sig-paren">(</span><em>dataset</em>, <em>item_data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#save_item"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.save_item" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save an item to the dataset with the data given as a dict</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>(</strong> (<em>dataset</em>) – obj:netCDF4.Dataset): netcdf4 Dataset to add</li>
-<li><strong>item_data</strong> (<em>dict</em>) – with the data to add, for example:</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<table border="1" class="docutils">
-<colgroup>
-<col width="22%" />
-<col width="78%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Key</th>
-<th class="head">Example</th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">var_name</span></code></td>
-<td>Z</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">dimension</span></code></td>
-<td>(‘time’, ‘height’)</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">arr</span></code></td>
-<td>self.corr_refl_reg[:].filled()</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">long_name</span></code></td>
-<td>“Reflectivity factor”</td>
-</tr>
-<tr class="row-even"><td><strong>optional</strong></td>
-<td>&#160;</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">comment</span></code></td>
-<td>“Wind profiler reflectivity factor corrected by cloud radar”</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">units</span></code></td>
-<td>“dBz”</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">missing_value</span></code></td>
-<td>-200.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">plot_range</span></code></td>
-<td>[-50., 20.]</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal notranslate"><span class="pre">plot_scale</span></code></td>
-<td>“linear”</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal notranslate"><span class="pre">vartype</span></code></td>
-<td>np.float32</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="class">
+<dl class="py class">
 <dt id="trace_source.hysplit.assemble_time_height">
-<em class="property">class </em><code class="descclassname">trace_source.hysplit.</code><code class="descname">assemble_time_height</code><span class="sig-paren">(</span><em>config_file='../config.toml'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#assemble_time_height"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.assemble_time_height" title="Permalink to this definition">¶</a></dt>
-<dd><p>assemble a time height period by putting multiple hysplit trajectories togehter,
-calculate the statistics and save to a netcdf file</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config_file</strong> (<em>str</em><em>, </em><em>optional</em>) – path to the config file</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
+<em class="property">class </em><code class="sig-prename descclassname">trace_source.hysplit.</code><code class="sig-name descname">assemble_time_height</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_file</span><span class="o">=</span><span class="default_value">'../config.toml'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#assemble_time_height"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.assemble_time_height" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
 <dt id="trace_source.hysplit.assemble_time_height.assemble">
-<code class="descname">assemble</code><span class="sig-paren">(</span><em>dt_range=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#assemble_time_height.assemble"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.assemble_time_height.assemble" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">assemble</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dt_range</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#assemble_time_height.assemble"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.assemble_time_height.assemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>assemble the statistics for a range of trajectories and
 save the statistics to dicts</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dt_range</strong> (<em>list</em><em>(</em><em>datetime</em><em>)</em><em>, </em><em>optional</em>) – timerange for that the statistics is assembled,
-default taken from config</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="trace_source.hysplit.assemble_time_height.dump2netcdf">
-<code class="descname">dump2netcdf</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#assemble_time_height.dump2netcdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.assemble_time_height.dump2netcdf" title="Permalink to this definition">¶</a></dt>
-<dd><p>dump the assembled data to a netcdf file repeatatly call <a class="reference internal" href="#trace_source.hysplit.save_item" title="trace_source.hysplit.save_item"><code class="xref py py-meth docutils literal notranslate"><span class="pre">save_item()</span></code></a>
-configuration (directories, names, etc) is given by the config file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dt_range</strong> (<em>list</em><em>(</em><em>datetime</em><em>)</em><em>, </em><em>optional</em>) – timerange for that the statistics is assembled,
+default taken from config</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="trace_source.hysplit.trajectory">
-<em class="property">class </em><code class="descclassname">trace_source.hysplit.</code><code class="descname">trajectory</code><span class="sig-paren">(</span><em>config</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.trajectory" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">trace_source.hysplit.</code><code class="sig-name descname">trajectory</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#trajectory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.trajectory" title="Permalink to this definition">¶</a></dt>
 <dd><p>handle a single trajectory</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>config</strong> (<em>dict</em>) – content of the config file</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>dict</em>) – content of the config file</p>
+</dd>
+</dl>
+<dl class="py method">
 <dt id="trace_source.hysplit.trajectory.load_file">
-<code class="descname">load_file</code><span class="sig-paren">(</span><em>filename</em>, <em>silent=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#trajectory.load_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.trajectory.load_file" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em>, <em class="sig-param"><span class="n">silent</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#trajectory.load_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.trajectory.load_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>load a trajectory from the .tdump file</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>filename</strong> (<em>str</em>) – path and name of the file</li>
-<li><strong>silent</strong> (<em>bool</em><em>, </em><em>optional</em>) – verbose output or not</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – path and name of the file</p></li>
+<li><p><strong>silent</strong> (<em>bool</em><em>, </em><em>optional</em>) – verbose output or not</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="trace_source.hysplit.trajectory.load_dict">
-<code class="descname">load_dict</code><span class="sig-paren">(</span><em>d</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#trajectory.load_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.trajectory.load_dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">d</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#trajectory.load_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.trajectory.load_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>load the trajectory without the original data</p>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">only the first member of a ensemble is saved</p>
+<p class="admonition-title">Note</p>
+<p>only the first member of a ensemble is saved</p>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>d</strong> (<em>dict</em>) – </td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>d</strong> (<em>dict</em>) – </p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="trace_source.hysplit.trajectory.load_netcdf">
-<code class="descname">load_netcdf</code><span class="sig-paren">(</span><em>ncf</em>, <em>dt</em>, <em>height</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#trajectory.load_netcdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.trajectory.load_netcdf" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_netcdf</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ncf</span></em>, <em class="sig-param"><span class="n">dt</span></em>, <em class="sig-param"><span class="n">height</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#trajectory.load_netcdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.trajectory.load_netcdf" title="Permalink to this definition">¶</a></dt>
 <dd><p>load the trajectory at a given datetime and height from the provided netcdf file</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>(</strong> (<em>ncf</em>) – obj:netCDF4.Dataset): netcdf4 Dataset to add</li>
-<li><strong>dt</strong> – datetime of trajectory to load</li>
-<li><strong>height</strong> – height of trajectory to load</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>(</strong> (<em>ncf</em>) – obj:netCDF4.Dataset): netcdf4 Dataset to add</p></li>
+<li><p><strong>dt</strong> – datetime of trajectory to load</p></li>
+<li><p><strong>height</strong> – height of trajectory to load</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><p>dict with data</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>dict with data</p>
 <p>Keys: <code class="docutils literal notranslate"><span class="pre">time</span></code>, <code class="docutils literal notranslate"><span class="pre">age</span></code>, <code class="docutils literal notranslate"><span class="pre">latitude</span></code>, <code class="docutils literal notranslate"><span class="pre">longitude</span></code>, <code class="docutils literal notranslate"><span class="pre">height</span></code></p>
 <p>Optional <code class="docutils literal notranslate"><span class="pre">pressure</span></code>, <code class="docutils literal notranslate"><span class="pre">air_tem</span></code>, <code class="docutils literal notranslate"><span class="pre">rainfall</span></code>, <code class="docutils literal notranslate"><span class="pre">relhumid</span></code>, <code class="docutils literal notranslate"><span class="pre">terr_msl</span></code></p>
 </p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="trace_source.hysplit.trajectory.add_land_sfc">
-<code class="descname">add_land_sfc</code><span class="sig-paren">(</span><em>ls=None</em>, <em>silent=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#trajectory.add_land_sfc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.trajectory.add_land_sfc" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_land_sfc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ls</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">silent</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#trajectory.add_land_sfc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.trajectory.add_land_sfc" title="Permalink to this definition">¶</a></dt>
 <dd><p>add the land surface information to a single trajectory</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>ls</strong> (<a class="reference internal" href="#trace_source.land_sfc.land_sfc" title="trace_source.land_sfc.land_sfc"><code class="xref py py-class docutils literal notranslate"><span class="pre">trace_source.land_sfc.land_sfc</span></code></a>, optional) – pre loaded land surface information
-(separate loading consumes lot of time)</li>
-<li><strong>silent</strong> (<em>bool</em><em>, </em><em>optional</em>) – verbose output or not</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ls</strong> (<a class="reference internal" href="#trace_source.land_sfc.land_sfc" title="trace_source.land_sfc.land_sfc"><code class="xref py py-class docutils literal notranslate"><span class="pre">trace_source.land_sfc.land_sfc</span></code></a>, optional) – pre loaded land surface information
+(separate loading consumes lot of time)</p></li>
+<li><p><strong>silent</strong> (<em>bool</em><em>, </em><em>optional</em>) – verbose output or not</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="trace_source.hysplit.trajectory.add_ensemble_land_sfc">
-<code class="descname">add_ensemble_land_sfc</code><span class="sig-paren">(</span><em>ls=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#trajectory.add_ensemble_land_sfc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.trajectory.add_ensemble_land_sfc" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_ensemble_land_sfc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ls</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#trajectory.add_ensemble_land_sfc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.trajectory.add_ensemble_land_sfc" title="Permalink to this definition">¶</a></dt>
 <dd><p>add the land surface information to an ensemble trajectory</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>ls</strong> (<a class="reference internal" href="#trace_source.land_sfc.land_sfc" title="trace_source.land_sfc.land_sfc"><code class="xref py py-class docutils literal notranslate"><span class="pre">trace_source.land_sfc.land_sfc</span></code></a>, optional) – pre loaded land surface information
-(separate loading consumes lot of time)</li>
-<li><strong>silent</strong> (<em>bool</em><em>, </em><em>optional</em>) – verbose output or not</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ls</strong> (<a class="reference internal" href="#trace_source.land_sfc.land_sfc" title="trace_source.land_sfc.land_sfc"><code class="xref py py-class docutils literal notranslate"><span class="pre">trace_source.land_sfc.land_sfc</span></code></a>, optional) – pre loaded land surface information
+(separate loading consumes lot of time)</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="trace_source.hysplit.trajectory.add_ensemble_geo_names">
-<code class="descname">add_ensemble_geo_names</code><span class="sig-paren">(</span><em>ng=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#trajectory.add_ensemble_geo_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.trajectory.add_ensemble_geo_names" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_ensemble_geo_names</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ng</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#trajectory.add_ensemble_geo_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.trajectory.add_ensemble_geo_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>add the geographical names to a ensemble trajectory</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>ng</strong> (<a class="reference internal" href="#trace_source.land_sfc.named_geography" title="trace_source.land_sfc.named_geography"><code class="xref py py-class docutils literal notranslate"><span class="pre">trace_source.land_sfc.named_geography</span></code></a>, optional) – pre loaded named geography information
-(separate loading consumes lot of time)</li>
-<li><strong>silent</strong> (<em>bool</em><em>, </em><em>optional</em>) – verbose output or not</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ng</strong> (<a class="reference internal" href="#trace_source.land_sfc.named_geography" title="trace_source.land_sfc.named_geography"><code class="xref py py-class docutils literal notranslate"><span class="pre">trace_source.land_sfc.named_geography</span></code></a>, optional) – pre loaded named geography information
+(separate loading consumes lot of time)</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
+<dt id="trace_source.hysplit.trajectory.add_ensemble_lat_thres">
+<code class="sig-name descname">add_ensemble_lat_thres</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#trajectory.add_ensemble_lat_thres"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.trajectory.add_ensemble_lat_thres" title="Permalink to this definition">¶</a></dt>
+<dd><p>add the latitude threshold to a ensemble trajectory</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>silent</strong> (<em>bool</em><em>, </em><em>optional</em>) – verbose output or not</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="trace_source.hysplit.trajectory.add_area_land_sfc">
-<code class="descname">add_area_land_sfc</code><span class="sig-paren">(</span><em>maxheight</em>, <em>ls=None</em>, <em>silent=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#trajectory.add_area_land_sfc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.trajectory.add_area_land_sfc" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_area_land_sfc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">maxheight</span></em>, <em class="sig-param"><span class="n">ls</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">silent</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#trajectory.add_area_land_sfc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.trajectory.add_area_land_sfc" title="Permalink to this definition">¶</a></dt>
 <dd><p>land use inside an area around the trajectory</p>
 <p>add the shape to <code class="docutils literal notranslate"><span class="pre">self.shapes['shp_below{:.1f}km']</span></code></p>
 <p>and the statistics to <code class="docutils literal notranslate"><span class="pre">self.stat_ls['occ_shp_below{:.1f}km']</span></code></p>
 <p>sizes of circle (in 24h steps):</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span class="p">[</span> <span class="mf">0.05</span>      <span class="p">,</span>  <span class="mf">0.15</span>      <span class="p">,</span>  <span class="mf">0.4</span>       <span class="p">,</span>  <span class="mf">0.77666667</span><span class="p">,</span>  <span class="mf">1.25666667</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span> <span class="mf">0.05</span>      <span class="p">,</span>  <span class="mf">0.15</span>      <span class="p">,</span>  <span class="mf">0.4</span>       <span class="p">,</span>  <span class="mf">0.77666667</span><span class="p">,</span>  <span class="mf">1.25666667</span><span class="p">,</span>
  <span class="mf">1.81666667</span><span class="p">,</span>  <span class="mf">2.43333333</span><span class="p">,</span>  <span class="mf">3.08333333</span><span class="p">,</span>  <span class="mf">3.74333333</span><span class="p">,</span>  <span class="mf">4.39</span>      <span class="p">,</span>  <span class="mf">5.</span><span class="p">]</span>
 </pre></div>
 </div>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>maxheight</strong> – maximum height in meters or md for MIXDEPTH</li>
-<li><strong>ls</strong> (<a class="reference internal" href="#trace_source.land_sfc.land_sfc" title="trace_source.land_sfc.land_sfc"><code class="xref py py-class docutils literal notranslate"><span class="pre">trace_source.land_sfc.land_sfc</span></code></a>, optional) – pre loaded land surface information
-(separate loading consumes lot of time)</li>
-<li><strong>silent</strong> (<em>bool</em><em>, </em><em>optional</em>) – verbose output or not</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>maxheight</strong> – maximum height in meters or md for MIXDEPTH</p></li>
+<li><p><strong>ls</strong> (<a class="reference internal" href="#trace_source.land_sfc.land_sfc" title="trace_source.land_sfc.land_sfc"><code class="xref py py-class docutils literal notranslate"><span class="pre">trace_source.land_sfc.land_sfc</span></code></a>, optional) – pre loaded land surface information
+(separate loading consumes lot of time)</p></li>
+<li><p><strong>silent</strong> (<em>bool</em><em>, </em><em>optional</em>) – verbose output or not</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+</dl>
 <div class="deprecated">
-<p><span class="versionmodified">Deprecated since version 0.1: </span>use the ensemble trajectories instead</p>
+<p><span class="versionmodified deprecated">Deprecated since version 0.1: </span>use the ensemble trajectories instead</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="trace_source.hysplit.trajectory.evaluate">
-<code class="descname">evaluate</code><span class="sig-paren">(</span><em>silent=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#trajectory.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.trajectory.evaluate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">evaluate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">silent</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/hysplit.html#trajectory.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.hysplit.trajectory.evaluate" title="Permalink to this definition">¶</a></dt>
 <dd><p>adds some general statistic to a single trajectory</p>
 <p>Keys: <code class="docutils literal notranslate"><span class="pre">Tmin_whole</span></code>, <code class="docutils literal notranslate"><span class="pre">Precip_whole</span></code>, <code class="docutils literal notranslate"><span class="pre">RHmax_whole</span></code>, <code class="docutils literal notranslate"><span class="pre">Tmin_24h</span></code>, <code class="docutils literal notranslate"><span class="pre">Precip_24h</span></code>,
 <code class="docutils literal notranslate"><span class="pre">RHmax24h</span></code>, <code class="docutils literal notranslate"><span class="pre">min_height_ag</span></code>, <code class="docutils literal notranslate"><span class="pre">traj_distance_total</span></code>, <code class="docutils literal notranslate"><span class="pre">mean_bearing_from_endpoint</span></code></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>silent</strong> (<em>bool</em><em>, </em><em>optional</em>) – verbose output or not</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>silent</strong> (<em>bool</em><em>, </em><em>optional</em>) – verbose output or not</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -445,140 +354,126 @@ configuration (directories, names, etc) is given by the config file</p>
 </div>
 <div class="section" id="module-trace_source.land_sfc">
 <span id="land-surface-module"></span><h2>land surface module<a class="headerlink" href="#module-trace_source.land_sfc" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
+<dl class="py function">
 <dt id="trace_source.land_sfc.nearest">
-<code class="descclassname">trace_source.land_sfc.</code><code class="descname">nearest</code><span class="sig-paren">(</span><em>point</em>, <em>array</em>, <em>delta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/land_sfc.html#nearest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.land_sfc.nearest" title="Permalink to this definition">¶</a></dt>
-<dd><p>searches nearest point in given array and returns (i, array[i])
-taken from BA programm an improved with index calculation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>point</strong> (<em>float</em>) – point to search for</li>
-<li><strong>array</strong> (<em>np.array</em>) – array to search in</li>
-<li><strong>delta</strong> – step size in array</li>
+<code class="sig-prename descclassname">trace_source.land_sfc.</code><code class="sig-name descname">nearest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">point</span></em>, <em class="sig-param"><span class="n">array</span></em>, <em class="sig-param"><span class="n">delta</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/land_sfc.html#nearest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.land_sfc.nearest" title="Permalink to this definition">¶</a></dt>
+<dd><p>calculate the index directly</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>point</strong> (<em>float</em>) – point to search for</p></li>
+<li><p><strong>array</strong> (<em>np.array</em>) – array to search in</p></li>
+<li><p><strong>delta</strong> – step size in array</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><code class="docutils literal notranslate"><span class="pre">(i,</span> <span class="pre">array[i])</span></code></p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(i,</span> <span class="pre">array[i])</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="class">
+<dl class="py function">
+<dt id="trace_source.land_sfc.argnearest">
+<code class="sig-prename descclassname">trace_source.land_sfc.</code><code class="sig-name descname">argnearest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">array</span></em>, <em class="sig-param"><span class="n">delta</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/land_sfc.html#argnearest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.land_sfc.argnearest" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
 <dt id="trace_source.land_sfc.land_sfc">
-<em class="property">class </em><code class="descclassname">trace_source.land_sfc.</code><code class="descname">land_sfc</code><a class="reference internal" href="_modules/trace_source/land_sfc.html#land_sfc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.land_sfc.land_sfc" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">trace_source.land_sfc.</code><code class="sig-name descname">land_sfc</code><a class="reference internal" href="_modules/trace_source/land_sfc.html#land_sfc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.land_sfc.land_sfc" title="Permalink to this definition">¶</a></dt>
 <dd><p>load the data from the geotiff <code class="docutils literal notranslate"><span class="pre">data/resampledLCType.tif</span></code>
 and concatenate to the simplified scheme</p>
-<table border="1" class="docutils">
+<table class="docutils align-default">
 <colgroup>
-<col width="38%" />
-<col width="63%" />
+<col style="width: 38%" />
+<col style="width: 63%" />
 </colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">MODIS Category</th>
-<th class="head">simplified</th>
+<thead>
+<tr class="row-odd"><th class="head"><p>MODIS Category</p></th>
+<th class="head"><p>simplified</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>0</td>
-<td>0 water</td>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>0 water</p></td>
 </tr>
-<tr class="row-odd"><td>1,2,3,4,5,6</td>
-<td>1 forrest</td>
+<tr class="row-odd"><td><p>1,2,3,4,5,6</p></td>
+<td><p>1 forest</p></td>
 </tr>
-<tr class="row-even"><td>7,8,9</td>
-<td>2 savanna, shrubland</td>
+<tr class="row-even"><td><p>7,8,9</p></td>
+<td><p>2 savanna, shrubland</p></td>
 </tr>
-<tr class="row-odd"><td>10, 11, 12, 14</td>
-<td>3 grass, cropland</td>
+<tr class="row-odd"><td><p>10, 11, 12, 14</p></td>
+<td><p>3 grass, cropland</p></td>
 </tr>
-<tr class="row-even"><td>13</td>
-<td>4 urban</td>
+<tr class="row-even"><td><p>13</p></td>
+<td><p>4 urban</p></td>
 </tr>
-<tr class="row-odd"><td>15</td>
-<td>5 snow</td>
+<tr class="row-odd"><td><p>15</p></td>
+<td><p>5 snow</p></td>
 </tr>
-<tr class="row-even"><td>16</td>
-<td>6 barren</td>
+<tr class="row-even"><td><p>16</p></td>
+<td><p>6 barren</p></td>
 </tr>
 </tbody>
 </table>
-<dl class="method">
+<dl class="py method">
 <dt id="trace_source.land_sfc.land_sfc.get_land_sfc">
-<code class="descname">get_land_sfc</code><span class="sig-paren">(</span><em>lat</em>, <em>lon</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/land_sfc.html#land_sfc.get_land_sfc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.land_sfc.land_sfc.get_land_sfc" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_land_sfc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lat</span></em>, <em class="sig-param"><span class="n">lon</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/land_sfc.html#land_sfc.get_land_sfc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.land_sfc.land_sfc.get_land_sfc" title="Permalink to this definition">¶</a></dt>
 <dd><p>get the land use pixel for a given coordinate
 interpolation to the nearest pixel is done</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>lat</strong> (<em>float</em><em>, </em><em>array</em>) – latitude</li>
-<li><strong>lon</strong> (<em>float</em><em>, </em><em>array</em>) – longitude</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lat</strong> (<em>float</em><em>, </em><em>array</em>) – latitude</p></li>
+<li><p><strong>lon</strong> (<em>float</em><em>, </em><em>array</em>) – longitude</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">array or int with the land use category</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>array or int with the land use category</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="trace_source.land_sfc.land_sfc.get_land_sfc_shape">
-<code class="descname">get_land_sfc_shape</code><span class="sig-paren">(</span><em>shp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/land_sfc.html#land_sfc.get_land_sfc_shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.land_sfc.land_sfc.get_land_sfc_shape" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_land_sfc_shape</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">shp</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/land_sfc.html#land_sfc.get_land_sfc_shape"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.land_sfc.land_sfc.get_land_sfc_shape" title="Permalink to this definition">¶</a></dt>
 <dd><p>get the land use inside a given shape</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>shp</strong> – shapely Multipolygon</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>shp</strong> – shapely Multipolygon</p>
+</dd>
+</dl>
 <div class="deprecated">
-<p><span class="versionmodified">Deprecated since version 0.1: </span>use the ensemble trajectories instead</p>
+<p><span class="versionmodified deprecated">Deprecated since version 0.1: </span>use the ensemble trajectories instead</p>
 </div>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="trace_source.land_sfc.named_geography">
-<em class="property">class </em><code class="descclassname">trace_source.land_sfc.</code><code class="descname">named_geography</code><span class="sig-paren">(</span><em>selected_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/land_sfc.html#named_geography"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.land_sfc.named_geography" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">trace_source.land_sfc.</code><code class="sig-name descname">named_geography</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">selected_type</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/land_sfc.html#named_geography"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.land_sfc.named_geography" title="Permalink to this definition">¶</a></dt>
 <dd><p>handle a single trajectory</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>selected_type</strong> (<em>str</em>) – name in the <code class="docutils literal notranslate"><span class="pre">geonames_config.toml</span></code></td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>selected_type</strong> (<em>str</em>) – name in the <code class="docutils literal notranslate"><span class="pre">geonames_config.toml</span></code></p>
+</dd>
+</dl>
+<dl class="py method">
 <dt id="trace_source.land_sfc.named_geography.get_geo_names">
-<code class="descname">get_geo_names</code><span class="sig-paren">(</span><em>lat</em>, <em>lon</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/land_sfc.html#named_geography.get_geo_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.land_sfc.named_geography.get_geo_names" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_geo_names</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lat</span></em>, <em class="sig-param"><span class="n">lon</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source/land_sfc.html#named_geography.get_geo_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.land_sfc.named_geography.get_geo_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>get the names defined in the shapefile for a given coordinate</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>lat</strong> (<em>float</em><em>, </em><em>array</em>) – latitude</li>
-<li><strong>lon</strong> (<em>float</em><em>, </em><em>array</em>) – longitude</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lat</strong> (<em>float</em><em>, </em><em>array</em>) – latitude</p></li>
+<li><p><strong>lon</strong> (<em>float</em><em>, </em><em>array</em>) – longitude</p></li>
 </ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">array or int with the geoname category</p>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>array or int with the geoname category</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -586,28 +481,113 @@ interpolation to the nearest pixel is done</p>
 </div>
 <div class="section" id="module-trace_source">
 <span id="trace-module"></span><h2>trace module<a class="headerlink" href="#module-trace_source" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
+<dl class="py function">
 <dt id="trace_source.time_list">
-<code class="descclassname">trace_source.</code><code class="descname">time_list</code><span class="sig-paren">(</span><em>begin</em>, <em>end</em>, <em>delta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source.html#time_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.time_list" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">trace_source.</code><code class="sig-name descname">time_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">begin</span></em>, <em class="sig-param"><span class="n">end</span></em>, <em class="sig-param"><span class="n">delta</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source.html#time_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.time_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>generate a time list from begin to &lt;= end with delta</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>begin</strong> (<em>datetime</em>) – start time</li>
-<li><strong>end</strong> (<em>datetime</em>) – end time (included)</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>begin</strong> (<em>datetime</em>) – start time</p></li>
+<li><p><strong>end</strong> (<em>datetime</em>) – end time (included)</p></li>
 </ul>
-</td>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of generated datetime objects</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="trace_source.save_item">
+<code class="sig-prename descclassname">trace_source.</code><code class="sig-name descname">save_item</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span></em>, <em class="sig-param"><span class="n">item_data</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source.html#save_item"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.save_item" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save an item to the dataset with the data given as a dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>(</strong> (<em>dataset</em>) – obj:netCDF4.Dataset): netcdf4 Dataset to add</p></li>
+<li><p><strong>item_data</strong> (<em>dict</em>) – with the data to add, for example:</p></li>
+</ul>
+</dd>
+</dl>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 78%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Example</p></th>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">List of generated datetime objects</p>
-</td>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">var_name</span></code></p></td>
+<td><p>Z</p></td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
-</td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dimension</span></code></p></td>
+<td><p>(‘time’, ‘height’)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">arr</span></code></p></td>
+<td><p>self.corr_refl_reg[:].filled()</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">long_name</span></code></p></td>
+<td><p>“Reflectivity factor”</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>optional</strong></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">comment</span></code></p></td>
+<td><p>“Wind profiler reflectivity factor corrected by cloud radar”</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">units</span></code></p></td>
+<td><p>“dBz”</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">missing_value</span></code></p></td>
+<td><p>-200.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">plot_range</span></code></p></td>
+<td><p>[-50., 20.]</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">plot_scale</span></code></p></td>
+<td><p>“linear”</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vartype</span></code></p></td>
+<td><p>np.float32</p></td>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="py function">
+<dt id="trace_source.get_git_hash">
+<code class="sig-prename descclassname">trace_source.</code><code class="sig-name descname">get_git_hash</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source.html#get_git_hash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.get_git_hash" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>git describe string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt id="trace_source.assemble_pattern">
+<em class="property">class </em><code class="sig-prename descclassname">trace_source.</code><code class="sig-name descname">assemble_pattern</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_file</span><span class="o">=</span><span class="default_value">'../config.toml'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source.html#assemble_pattern"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.assemble_pattern" title="Permalink to this definition">¶</a></dt>
+<dd><p>assemble a time height period by putting multiple hysplit trajectories togehter,
+calculate the statistics and save to a netcdf file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config_file</strong> (<em>str</em><em>, </em><em>optional</em>) – path to the config file</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="trace_source.assemble_pattern.dump2netcdf">
+<code class="sig-name descname">dump2netcdf</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model_str</span><span class="o">=</span><span class="default_value">'hysplit'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/trace_source.html#assemble_pattern.dump2netcdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#trace_source.assemble_pattern.dump2netcdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>dump the assembled data to a netcdf file repeatatly call <a class="reference internal" href="#trace_source.save_item" title="trace_source.save_item"><code class="xref py py-meth docutils literal notranslate"><span class="pre">save_item()</span></code></a>
+configuration (directories, names, etc) is given by the config file</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -615,13 +595,14 @@ interpolation to the nearest pixel is done</p>
 
 
            </div>
+           
           </div>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="README.html" class="btn btn-neutral" title="trace: trajectory analysis tool" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="setup.html" class="btn btn-neutral float-left" title="Setup" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -630,11 +611,19 @@ interpolation to the nearest pixel is done</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Martin Radenz.
+        
+        &copy; Copyright 2020, Martin Radenz
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -646,37 +635,15 @@ interpolation to the nearest pixel is done</p>
   </div>
   
 
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'0.1',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

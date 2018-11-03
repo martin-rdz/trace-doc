@@ -1,58 +1,55 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>trace_source.land_sfc &mdash; trace 0.1 documentation</title>
+  <title>trace_source.land_sfc &mdash; trace_airmass_source 0.4 documentation</title>
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
   
 
   
-
-  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
-  
-
-  
-  
-    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../../genindex.html"/>
-        <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="trace 0.1 documentation" href="../../index.html"/>
-        <link rel="up" title="trace_source" href="../trace_source.html"/> 
-
-  
-  <script src="../../_static/js/modernizr.min.js"></script>
-
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
-            <a href="../../index.html" class="icon icon-home"> trace
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> trace_airmass_source
           
 
           
@@ -62,7 +59,7 @@
             
             
               <div class="version">
-                0.1
+                0.4
               </div>
             
           
@@ -79,62 +76,86 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
             
-                <p class="caption"><span class="caption-text">Contents:</span></p>
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../setup.html">Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api_overview.html">api documentation</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../../index.html">trace</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">trace_airmass_source</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../../index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="../index.html">Module code</a> &raquo;</li>
-      
+        
           <li><a href="../trace_source.html">trace_source</a> &raquo;</li>
-      
-    <li>trace_source.land_sfc</li>
+        
+      <li>trace_source.land_sfc</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
   <h1>Source code for trace_source.land_sfc</h1><div class="highlight"><pre>
-<span class="ch">#! /usr/bin/env python3</span>
+<span></span><span class="ch">#! /usr/bin/env python3</span>
 <span class="c1"># coding=utf-8</span>
 <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -149,13 +170,15 @@
 <span class="kn">from</span> <span class="nn">pyproj</span> <span class="k">import</span> <span class="n">Proj</span><span class="p">,</span> <span class="n">transform</span>
 <span class="kn">from</span> <span class="nn">fastkml</span> <span class="k">import</span> <span class="n">kml</span>
 <span class="kn">from</span> <span class="nn">shapely.geometry.point</span> <span class="k">import</span> <span class="n">Point</span>
+<span class="kn">import</span> <span class="nn">shapely.vectorized</span>
 <span class="kn">import</span> <span class="nn">toml</span>
 
+<span class="kn">from</span> <span class="nn">numba</span> <span class="k">import</span> <span class="n">jit</span>
 
-<div class="viewcode-block" id="nearest"><a class="viewcode-back" href="../../api_overview.html#trace_source.land_sfc.nearest">[docs]</a><span class="k">def</span> <span class="nf">nearest</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
+<div class="viewcode-block" id="nearest"><a class="viewcode-back" href="../../api_overview.html#trace_source.land_sfc.nearest">[docs]</a><span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">nearest</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    searches nearest point in given array and returns (i, array[i])</span>
-<span class="sd">    taken from BA programm an improved with index calculation</span>
+<span class="sd">    calculate the index directly</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        point (float): point to search for</span>
@@ -165,14 +188,49 @@
 <span class="sd">    Returns: </span>
 <span class="sd">        ``(i, array[i])``</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># i = bisect.bisect_left(array, point)</span>
-    <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">point</span> <span class="o">-</span> <span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">delta</span><span class="p">)</span>
-    <span class="c1"># print(&quot;search nearest &quot;, i, point, &quot; | &quot;, array[max(0,i-3):i+4])</span>
+    <span class="c1">## i = bisect.bisect_left(array, point)</span>
+    <span class="c1">#i = int((point - array[0]) / delta)</span>
+    <span class="c1">## print(&quot;search nearest &quot;, i, point, &quot; | &quot;, array[max(0,i-3):i+4])</span>
 
-    <span class="n">nearest</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">array</span><span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">50</span><span class="p">):</span><span class="n">i</span> <span class="o">+</span> <span class="mi">51</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">point</span> <span class="o">-</span> <span class="n">t</span><span class="p">))</span>
+    <span class="c1">#nearest = min(array[max(0, i - 10):i + 10], key=lambda t: abs(point - t))</span>
 
-    <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">array</span> <span class="o">==</span> <span class="n">nearest</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">nearest</span><span class="p">)</span></div>
+    <span class="c1">#i = np.where(array == nearest)[0][0]</span>
+
+    <span class="n">i_calc</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">((</span><span class="n">point</span> <span class="o">-</span> <span class="n">array</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">delta</span><span class="p">),</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1">#print(i, i_calc, point, array[i-1:i+2], (point - array[0])/delta)</span>
+    <span class="c1">#assert i == i_calc</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">i_calc</span><span class="p">)</span>
+    <span class="c1">#return (i, nearest)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="argnearest"><a class="viewcode-back" href="../../api_overview.html#trace_source.land_sfc.argnearest">[docs]</a><span class="k">def</span> <span class="nf">argnearest</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span> <span class="o">==</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">array</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">value</span><span class="p">):</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">])</span></div>
+
+
+<span class="c1">#@jit(nopython=True)</span>
+<span class="k">def</span> <span class="nf">fast_land_sfc</span><span class="p">(</span><span class="n">land_sfc_data</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">lats</span><span class="p">,</span> <span class="n">longs</span><span class="p">):</span>
+    <span class="n">land_sfc_category</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">lat</span><span class="p">),))</span>
+
+
+    <span class="n">land_sfc_category_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">lat</span><span class="p">),))</span>
+    <span class="n">ilat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">((</span><span class="n">lat</span> <span class="o">-</span> <span class="n">lats</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/-</span><span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">ilat</span><span class="p">[</span><span class="n">ilat</span> <span class="o">&gt;=</span> <span class="n">lats</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">lats</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span>
+    <span class="n">ilat</span><span class="p">[</span><span class="n">ilat</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">ilon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">((</span><span class="n">lon</span> <span class="o">-</span> <span class="n">longs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">ilon</span><span class="p">[</span><span class="n">ilon</span> <span class="o">&gt;=</span> <span class="n">longs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">longs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span>
+    <span class="n">ilon</span><span class="p">[</span><span class="n">ilon</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">land_sfc_category</span> <span class="o">=</span> <span class="n">land_sfc_data</span><span class="p">[</span><span class="n">ilat</span><span class="p">,</span> <span class="n">ilon</span><span class="p">]</span>
+    <span class="n">land_sfc_category</span><span class="p">[</span><span class="n">lat</span> <span class="o">==</span> <span class="o">-</span><span class="mf">999.</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">land_sfc_category</span>
 
 
 <div class="viewcode-block" id="land_sfc"><a class="viewcode-back" href="../../api_overview.html#trace_source.land_sfc.land_sfc">[docs]</a><span class="k">class</span> <span class="nc">land_sfc</span><span class="p">():</span>
@@ -184,7 +242,7 @@
 <span class="sd">    MODIS Category     simplified</span>
 <span class="sd">    ===============   =========================</span>
 <span class="sd">    0                  0 water</span>
-<span class="sd">    1,2,3,4,5,6        1 forrest</span>
+<span class="sd">    1,2,3,4,5,6        1 forest</span>
 <span class="sd">    7,8,9              2 savanna, shrubland</span>
 <span class="sd">    10, 11, 12, 14     3 grass, cropland</span>
 <span class="sd">    13                 4 urban</span>
@@ -194,7 +252,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">filename</span> <span class="o">=</span>  <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span> <span class="o">+</span>\
+        <span class="n">filename</span> <span class="o">=</span>  <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span> <span class="o">+</span>\
                     <span class="s1">&#39;/../data/resampledLCType.tif&#39;</span>
 
         <span class="c1">#with rasterio.divers():</span>
@@ -207,7 +265,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">shape</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">transform</span>
 
-            <span class="n">T0</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">affine</span>
+            <span class="n">T0</span> <span class="o">=</span> <span class="n">src</span><span class="o">.</span><span class="n">transform</span>
             <span class="n">p1</span> <span class="o">=</span> <span class="n">Proj</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;T0 aka affine transformation &#39;</span><span class="p">,</span> <span class="n">T0</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;src.crs&#39;</span><span class="p">,</span> <span class="n">src</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
@@ -227,12 +285,14 @@
 
         <span class="n">etemp</span><span class="p">,</span> <span class="n">northings</span> <span class="o">=</span> <span class="n">T1</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span>
         <span class="n">eastings</span><span class="p">,</span> <span class="n">ntemp</span> <span class="o">=</span> <span class="n">T1</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">im</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">eastings</span><span class="p">,</span> <span class="n">northings</span><span class="p">)</span>
+        <span class="c1">#print(eastings, northings)</span>
 
-        <span class="c1"># Project all longitudes, latitudes</span>
-        <span class="n">p2</span> <span class="o">=</span> <span class="n">Proj</span><span class="p">(</span><span class="n">proj</span><span class="o">=</span><span class="s1">&#39;latlong&#39;</span><span class="p">,</span> <span class="n">datum</span><span class="o">=</span><span class="s1">&#39;WGS84&#39;</span><span class="p">)</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">lats</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">etemp</span><span class="p">,</span> <span class="n">northings</span><span class="p">)</span>
-        <span class="n">longs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">eastings</span><span class="p">,</span> <span class="n">ntemp</span><span class="p">)</span>
+        <span class="c1"># the geotiff provided is already in WGS84</span>
+        <span class="k">assert</span> <span class="n">src</span><span class="o">.</span><span class="n">crs</span> <span class="o">==</span> <span class="s1">&#39;EPSG:4326&#39;</span>
+        <span class="c1"># # Project all longitudes, latitudes</span>
+        <span class="c1"># p2 = Proj(proj=&#39;latlong&#39;, datum=&#39;WGS84&#39;)</span>
+        <span class="c1"># _, lats = transform(p1, p2, etemp, northings)</span>
+        <span class="c1"># longs, _ = transform(p1, p2, eastings, ntemp)</span>
 
 
         <span class="c1"># slow version of the coordinate calculation</span>
@@ -249,30 +309,31 @@
         <span class="c1"># p2 = Proj(proj=&#39;latlong&#39;, datum=&#39;WGS84&#39;)</span>
         <span class="c1"># longs, lats = transform(p1, p2, eastings, northings)</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="n">longs</span> <span class="o">==</span> <span class="n">longs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:])</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">longs</span> <span class="o">=</span> <span class="n">longs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">lats</span><span class="o">.</span><span class="n">T</span> <span class="o">==</span> <span class="n">lats</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">lats</span> <span class="o">=</span> <span class="n">lats</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">eastings</span> <span class="o">==</span> <span class="n">eastings</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:])</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">longs</span> <span class="o">=</span> <span class="n">eastings</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">northings</span><span class="o">.</span><span class="n">T</span> <span class="o">==</span> <span class="n">northings</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lats</span> <span class="o">=</span> <span class="n">northings</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">land_sfc</span> <span class="o">=</span> <span class="n">im</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">land_sfc_data</span> <span class="o">=</span> <span class="n">im</span>
         <span class="c1"># high green</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">land_sfc</span><span class="p">[(</span><span class="n">im</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">im</span> <span class="o">&lt;=</span> <span class="mi">6</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">land_sfc_data</span><span class="p">[(</span><span class="n">im</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">im</span> <span class="o">&lt;=</span> <span class="mi">6</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="c1"># med green</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">land_sfc</span><span class="p">[(</span><span class="n">im</span> <span class="o">&gt;=</span> <span class="mi">7</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">im</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">land_sfc_data</span><span class="p">[(</span><span class="n">im</span> <span class="o">&gt;=</span> <span class="mi">7</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">im</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">2</span>
         <span class="c1"># low green</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">land_sfc</span><span class="p">[(</span><span class="n">im</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">im</span> <span class="o">&lt;=</span> <span class="mi">12</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">3</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">land_sfc</span><span class="p">[</span><span class="n">im</span> <span class="o">==</span> <span class="mi">14</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">land_sfc_data</span><span class="p">[(</span><span class="n">im</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">im</span> <span class="o">&lt;=</span> <span class="mi">12</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">land_sfc_data</span><span class="p">[</span><span class="n">im</span> <span class="o">==</span> <span class="mi">14</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
         <span class="c1"># urban</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">land_sfc</span><span class="p">[</span><span class="n">im</span> <span class="o">==</span> <span class="mi">13</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">land_sfc_data</span><span class="p">[</span><span class="n">im</span> <span class="o">==</span> <span class="mi">13</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
         <span class="c1"># snow/ice</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">land_sfc</span><span class="p">[</span><span class="n">im</span> <span class="o">==</span> <span class="mi">15</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">land_sfc_data</span><span class="p">[</span><span class="n">im</span> <span class="o">==</span> <span class="mi">15</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>
         <span class="c1"># desert</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">land_sfc</span><span class="p">[</span><span class="n">im</span> <span class="o">==</span> <span class="mi">16</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">land_sfc_data</span><span class="p">[</span><span class="n">im</span> <span class="o">==</span> <span class="mi">16</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">categories</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s1">&#39;water&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="s1">&#39;forrest&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="s1">&#39;savanna/shrub&#39;</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">categories</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s1">&#39;water&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="s1">&#39;forest&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="s1">&#39;savanna/shrub&#39;</span><span class="p">,</span>
                            <span class="mi">3</span><span class="p">:</span><span class="s1">&#39;grass/crop&#39;</span><span class="p">,</span><span class="mi">4</span><span class="p">:</span><span class="s1">&#39;urban&#39;</span><span class="p">,</span><span class="mi">5</span><span class="p">:</span><span class="s1">&#39;snow&#39;</span><span class="p">,</span><span class="mi">6</span><span class="p">:</span><span class="s1">&#39;barren&#39;</span><span class="p">}</span>
 
-
+    <span class="c1">#@jit(nopython=True)</span>
+    <span class="c1">#@profile</span>
 <div class="viewcode-block" id="land_sfc.get_land_sfc"><a class="viewcode-back" href="../../api_overview.html#trace_source.land_sfc.land_sfc.get_land_sfc">[docs]</a>    <span class="k">def</span> <span class="nf">get_land_sfc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        get the land use pixel for a given coordinate</span>
@@ -289,24 +350,22 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
             <span class="n">lat</span> <span class="o">=</span> <span class="p">[</span><span class="n">lat</span><span class="p">]</span>
             <span class="n">lon</span> <span class="o">=</span> <span class="p">[</span><span class="n">lon</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">):</span>
             <span class="n">lat</span> <span class="o">=</span> <span class="n">lat</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="o">-</span><span class="mf">999.</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
             <span class="n">lon</span> <span class="o">=</span> <span class="n">lon</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="o">-</span><span class="mf">999.</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="n">lat</span> <span class="o">=</span> <span class="n">lat</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">lon</span> <span class="o">=</span> <span class="n">lon</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
         <span class="c1"># im[lat, lon]</span>
 
-        <span class="n">land_sfc_category</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">lat</span><span class="p">),))</span>
+        <span class="n">land_sfc_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">land_sfc_data</span>
+        <span class="k">if</span> <span class="n">lat</span><span class="p">:</span>
+            <span class="n">cats</span> <span class="o">=</span> <span class="n">fast_land_sfc</span><span class="p">(</span><span class="n">land_sfc_data</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lats</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">longs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cats</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+        <span class="k">return</span> <span class="n">cats</span></div>
 
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">coord</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mf">999.</span><span class="p">:</span>
-                <span class="n">land_sfc_category</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1">#print(coord)</span>
-                <span class="n">ilat</span> <span class="o">=</span> <span class="n">nearest</span><span class="p">(</span><span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">lats</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">ilon</span> <span class="o">=</span> <span class="n">nearest</span><span class="p">(</span><span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">longs</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-                <span class="n">land_sfc_category</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">land_sfc</span><span class="p">[</span><span class="n">ilat</span><span class="p">,</span> <span class="n">ilon</span><span class="p">]</span>
-
-        <span class="k">return</span> <span class="n">land_sfc_category</span></div>
 
 
 <div class="viewcode-block" id="land_sfc.get_land_sfc_shape"><a class="viewcode-back" href="../../api_overview.html#trace_source.land_sfc.land_sfc.get_land_sfc_shape">[docs]</a>    <span class="k">def</span> <span class="nf">get_land_sfc_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shp</span><span class="p">):</span>
@@ -334,6 +393,19 @@
         <span class="k">return</span> <span class="n">masked_land_sfc</span></div></div>
 
 
+<span class="nd">@jit</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">fast_geonames</span><span class="p">(</span><span class="n">geo_names_data</span><span class="p">,</span> <span class="n">polygons</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">):</span>
+
+    <span class="n">geo_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">lat</span><span class="p">),))</span>
+    <span class="n">geo_id</span><span class="p">[:]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">geo_names_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">is_within</span> <span class="o">=</span> <span class="n">shapely</span><span class="o">.</span><span class="n">vectorized</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">polygons</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">)</span>
+        <span class="n">geo_id</span><span class="p">[</span><span class="n">is_within</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span>
+
+    <span class="k">return</span> <span class="n">geo_id</span>
+
+
 <div class="viewcode-block" id="named_geography"><a class="viewcode-back" href="../../api_overview.html#trace_source.land_sfc.named_geography">[docs]</a><span class="k">class</span> <span class="nc">named_geography</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    handle a single trajectory</span>
@@ -346,7 +418,7 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">config_file</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">toml</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">config_file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
 
-        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span> <span class="o">+</span>\
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span> <span class="o">+</span>\
                    <span class="s1">&#39;/../&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">selected_type</span><span class="p">][</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span>
         <span class="c1"># filename =  os.path.dirname(os.path.abspath(__file__)) +\</span>
         <span class="c1">#            &#39;/../prior_examples/geo_names.kml&#39;</span>
@@ -372,6 +444,8 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;available geo names &#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">geo_names</span><span class="p">)</span>
 
 
+    <span class="c1">#@jit(nopython=True)</span>
+    <span class="c1">#@profile</span>
 <div class="viewcode-block" id="named_geography.get_geo_names"><a class="viewcode-back" href="../../api_overview.html#trace_source.land_sfc.named_geography.get_geo_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_geo_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        get the names defined in the shapefile for a given coordinate</span>
@@ -388,28 +462,27 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
             <span class="n">lat</span> <span class="o">=</span> <span class="p">[</span><span class="n">lat</span><span class="p">]</span>
             <span class="n">lon</span> <span class="o">=</span> <span class="p">[</span><span class="n">lon</span><span class="p">]</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">MaskedArray</span><span class="p">):</span>
             <span class="n">lat</span> <span class="o">=</span> <span class="n">lat</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="o">-</span><span class="mf">999.</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
             <span class="n">lon</span> <span class="o">=</span> <span class="n">lon</span><span class="o">.</span><span class="n">filled</span><span class="p">(</span><span class="o">-</span><span class="mf">999.</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="n">lat</span> <span class="o">=</span> <span class="n">lat</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">lon</span> <span class="o">=</span> <span class="n">lon</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
         <span class="c1"># im[lat, lon]</span>
 
-        <span class="n">geo_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">lat</span><span class="p">),))</span>
-        <span class="n">geo_id</span><span class="p">[:]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">coord</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">)):</span>
-            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">geo_names</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">Point</span><span class="p">(</span><span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">within</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">polygons</span><span class="p">[</span><span class="n">name</span><span class="p">]):</span>
-                    <span class="n">geo_id</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span>
+        <span class="n">geo_id</span> <span class="o">=</span> <span class="n">fast_geonames</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geo_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">polygons</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">geo_id</span></div></div>
 
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="n">ng</span> <span class="o">=</span> <span class="n">named_geography</span><span class="p">()</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">ng</span><span class="o">.</span><span class="n">get_geo_names</span><span class="p">(</span><span class="mf">19.67</span><span class="p">,</span> <span class="mf">22.16</span><span class="p">))</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">ng</span><span class="o">.</span><span class="n">get_geo_names</span><span class="p">(</span><span class="mf">25.63</span><span class="p">,</span> <span class="mf">42.00</span><span class="p">))</span>
 </pre></div>
 
            </div>
+           
           </div>
           <footer>
   
@@ -418,11 +491,19 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Martin Radenz.
+        
+        &copy; Copyright 2020, Martin Radenz
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -434,37 +515,15 @@
   </div>
   
 
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../../',
-            VERSION:'0.1',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="../../_static/jquery.js"></script>
-      <script type="text/javascript" src="../../_static/underscore.js"></script>
-      <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

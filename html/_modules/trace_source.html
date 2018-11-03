@@ -1,58 +1,55 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>trace_source &mdash; trace 0.1 documentation</title>
+  <title>trace_source &mdash; trace_airmass_source 0.4 documentation</title>
   
 
   
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
   
 
   
-
-  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
 
-  
-
-  
-  
-    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  
-
-  
-
-  
-        <link rel="index" title="Index"
-              href="../genindex.html"/>
-        <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="trace 0.1 documentation" href="../index.html"/>
-        <link rel="up" title="Module code" href="index.html"/> 
-
-  
-  <script src="../_static/js/modernizr.min.js"></script>
-
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
+   
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
-            <a href="../index.html" class="icon icon-home"> trace
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> trace_airmass_source
           
 
           
@@ -62,7 +59,7 @@
             
             
               <div class="version">
-                0.1
+                0.4
               </div>
             
           
@@ -79,60 +76,84 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
             
-                <p class="caption"><span class="caption-text">Contents:</span></p>
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../README.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../setup.html">Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api_overview.html">api documentation</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../index.html">trace</a>
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">trace_airmass_source</a>
+        
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 
 <div role="navigation" aria-label="breadcrumbs navigation">
+
   <ul class="wy-breadcrumbs">
-    <li><a href="../index.html">Docs</a> &raquo;</li>
-      
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
           <li><a href="index.html">Module code</a> &raquo;</li>
-      
-    <li>trace_source</li>
+        
+      <li>trace_source</li>
+    
+    
       <li class="wy-breadcrumbs-aside">
         
-          
-        
       </li>
+    
   </ul>
+
+  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
   <h1>Source code for trace_source</h1><div class="highlight"><pre>
-<span class="ch">#! /usr/bin/env python3</span>
+<span></span><span class="ch">#! /usr/bin/env python3</span>
 <span class="c1"># coding=utf-8</span>
 <span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -141,11 +162,13 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">toml</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">netCDF4</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">gc</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
 
-<span class="kn">import</span> <span class="nn">trace_source.hysplit</span>
-<span class="kn">import</span> <span class="nn">trace_source.land_sfc</span>
-<span class="kn">import</span> <span class="nn">trace_source.helpers</span>
-<span class="kn">import</span> <span class="nn">trace_source.simulations</span>
 
 
 <div class="viewcode-block" id="time_list"><a class="viewcode-back" href="../api_overview.html#trace_source.time_list">[docs]</a><span class="k">def</span> <span class="nf">time_list</span><span class="p">(</span><span class="n">begin</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">delta</span><span class="p">):</span>
@@ -166,9 +189,334 @@
         <span class="n">elem</span> <span class="o">+=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">hours</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">time_list</span></div>
 
+
+<div class="viewcode-block" id="save_item"><a class="viewcode-back" href="../api_overview.html#trace_source.save_item">[docs]</a><span class="k">def</span> <span class="nf">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">item_data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save an item to the dataset with the data given as a dict</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset (:obj:netCDF4.Dataset): netcdf4 Dataset to add</span>
+<span class="sd">        item_data (dict): with the data to add, for example:</span>
+
+<span class="sd">    ==================  ===============================================================</span>
+<span class="sd">     Key                 Example                            </span>
+<span class="sd">    ==================  ===============================================================</span>
+<span class="sd">     ``var_name``        Z                                  </span>
+<span class="sd">     ``dimension``       (&#39;time&#39;, &#39;height&#39;)                 </span>
+<span class="sd">     ``arr``             self.corr_refl_reg[:].filled()     </span>
+<span class="sd">     ``long_name``       &quot;Reflectivity factor&quot;              </span>
+<span class="sd">     **optional**                                             </span>
+<span class="sd">     ``comment``         &quot;Wind profiler reflectivity factor corrected by cloud radar&quot;</span>
+<span class="sd">     ``units``           &quot;dBz&quot;                              </span>
+<span class="sd">     ``missing_value``   -200.                              </span>
+<span class="sd">     ``plot_range``      [-50., 20.]                        </span>
+<span class="sd">     ``plot_scale``      &quot;linear&quot;                           </span>
+<span class="sd">     ``vartype``         np.float32                         </span>
+<span class="sd">    ==================  ===============================================================</span>
+<span class="sd"> </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="s1">&#39;vartype&#39;</span> <span class="ow">in</span> <span class="n">item_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;var_name&#39;</span><span class="p">],</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;vartype&#39;</span><span class="p">],</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;dimension&#39;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">createVariable</span><span class="p">(</span><span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;var_name&#39;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;dimension&#39;</span><span class="p">])</span>
+    <span class="n">item</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;arr&#39;</span><span class="p">]</span>
+    <span class="n">item</span><span class="o">.</span><span class="n">long_name</span> <span class="o">=</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;long_name&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;comment&#39;</span> <span class="ow">in</span> <span class="n">item_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;comment&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;units&#39;</span> <span class="ow">in</span> <span class="n">item_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;units_html&#39;</span> <span class="ow">in</span> <span class="n">item_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">units_html</span> <span class="o">=</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;units_html&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;missing_value&#39;</span> <span class="ow">in</span> <span class="n">item_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">missing_value</span> <span class="o">=</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;missing_value&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;plot_range&#39;</span> <span class="ow">in</span> <span class="n">item_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">plot_range</span> <span class="o">=</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;plot_range&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;plot_scale&#39;</span> <span class="ow">in</span> <span class="n">item_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">plot_scale</span> <span class="o">=</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;plot_scale&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;axis&#39;</span> <span class="ow">in</span> <span class="n">item_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">axis</span> <span class="o">=</span> <span class="n">item_data</span><span class="p">[</span><span class="s1">&#39;axis&#39;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">dataset</span></div>
+
+<div class="viewcode-block" id="get_git_hash"><a class="viewcode-back" href="../api_overview.html#trace_source.get_git_hash">[docs]</a><span class="k">def</span> <span class="nf">get_git_hash</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        git describe string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">commit_id</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s1">&#39;git&#39;</span><span class="p">,</span> <span class="s1">&#39;describe&#39;</span><span class="p">,</span> <span class="s1">&#39;--always&#39;</span><span class="p">])</span>
+        <span class="n">branch</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="s1">&#39;git&#39;</span><span class="p">,</span> <span class="s1">&#39;rev-parse&#39;</span><span class="p">,</span> <span class="s1">&#39;--abbrev-ref&#39;</span><span class="p">,</span> <span class="s1">&#39;HEAD&#39;</span><span class="p">])</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">commit_id</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">branch</span> <span class="o">=</span> <span class="s1">&#39;not version controlled&#39;</span>
+    <span class="k">return</span> <span class="n">commit_id</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(),</span> <span class="n">branch</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="assemble_pattern"><a class="viewcode-back" href="../api_overview.html#trace_source.assemble_pattern">[docs]</a><span class="k">class</span> <span class="nc">assemble_pattern</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    assemble a time height period by putting multiple hysplit trajectories togehter,</span>
+<span class="sd">    calculate the statistics and save to a netcdf file</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+
+<span class="sd">        config_file (str, optional): path to the config file </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_file</span><span class="o">=</span><span class="s1">&#39;../config.toml&#39;</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">config_file</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">toml</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">config_file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="s1">&#39;begin_dt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="s1">&#39;begin&#39;</span><span class="p">],</span>
+                                                                     <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">_%H&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="s1">&#39;end_dt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="s1">&#39;end&#39;</span><span class="p">],</span>
+                                                                   <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">_%H&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span> <span class="o">=</span> <span class="n">trace_source</span><span class="o">.</span><span class="n">time_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="s1">&#39;begin_dt&#39;</span><span class="p">],</span>
+                                              <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="s1">&#39;end_dt&#39;</span><span class="p">],</span>
+                                              <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="s1">&#39;step&#39;</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;dt_list&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">height_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">][</span><span class="s1">&#39;top&#39;</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">500</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">no_part</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_res</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># the assemble method is model data specific</span>
+    <span class="c1">#def assemble(self, dt_range=None):</span>
+
+
+<div class="viewcode-block" id="assemble_pattern.dump2netcdf"><a class="viewcode-back" href="../api_overview.html#trace_source.assemble_pattern.dump2netcdf">[docs]</a>    <span class="k">def</span> <span class="nf">dump2netcdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_str</span><span class="o">=</span><span class="s1">&#39;hysplit&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        dump the assembled data to a netcdf file repeatatly call :meth:`save_item`</span>
+<span class="sd">        configuration (directories, names, etc) is given by the config file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">timestamps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">dt</span> <span class="o">-</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">1970</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">])</span>
+        <span class="n">hours_cn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">dt</span><span class="o">.</span><span class="n">hour</span> <span class="o">+</span> <span class="n">dt</span><span class="o">.</span><span class="n">minute</span> <span class="o">/</span> <span class="mf">60.</span> <span class="o">+</span> <span class="n">dt</span><span class="o">.</span><span class="n">second</span> <span class="o">/</span> <span class="mf">3600.</span> <span class="k">for</span> <span class="n">dt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;output_dir&#39;</span><span class="p">]):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;output_dir&#39;</span><span class="p">])</span>
+
+        <span class="n">ncfile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;output_dir&#39;</span><span class="p">]</span> <span class="o">+</span>\
+                <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">-output.nc&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;station&#39;</span><span class="p">][</span><span class="s1">&#39;short_name&#39;</span><span class="p">],</span> <span class="n">model_str</span><span class="p">)</span>
+        <span class="c1"># ncfile = &quot;/home/devel/&quot; +\</span>
+        <span class="c1">#          &#39;{}_hysplit_output.nc&#39;.format(self.config[&#39;time&#39;][&#39;begin_dt&#39;].strftime(&#39;%Y%m%d&#39;))</span>
+
+        <span class="c1">#dataset = netCDF4.Dataset(ncfile, &#39;w&#39;, format=&#39;NETCDF4&#39;)</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">netCDF4</span><span class="o">.</span><span class="n">Dataset</span><span class="p">(</span><span class="n">ncfile</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;NETCDF3_CLASSIC&#39;</span><span class="p">)</span>
+
+        <span class="n">dim_time</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">))</span>
+        <span class="n">dim_height</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height_list</span><span class="p">))</span>
+        <span class="n">dim_age</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;time_age&#39;</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">][</span><span class="s1">&#39;tr_duration&#39;</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">dim_cat</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;categories&#39;</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+        <span class="n">dim_regions</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;regions&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geo_names</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+        <span class="n">dim_lats</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">createDimension</span><span class="p">(</span><span class="s1">&#39;lat_thres&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lat_names</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+
+        <span class="c1"># times_cn = dataset.createVariable(&#39;time&#39;, np.float32, (&#39;time&#39;,))</span>
+        <span class="c1"># times_cn[:] = hours_cn.astype(np.float32)</span>
+        <span class="c1"># times_cn.units = &quot;hours since &quot; + self.begin_dt.strftime(&#39;%Y-%m-%d&#39;) + &quot;00:00:00 +00:00&quot;</span>
+        <span class="c1"># times_cn.long_name = &quot;Decimal hours from midnight UTC&quot;</span>
+        <span class="c1"># times_cn.axis = &quot;T&quot;</span>
+
+        <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="p">),</span>
+                            <span class="s1">&#39;vartype&#39;</span><span class="p">:</span> <span class="s1">&#39;i4&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="n">timestamps</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
+                            <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s2">&quot;Unix timestamp&quot;</span><span class="p">,</span>
+                            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s1">&#39;axis&#39;</span><span class="p">:</span> <span class="s1">&#39;T&#39;</span><span class="p">})</span>
+        <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="p">),</span>
+                            <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="n">hours_cn</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+                            <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s2">&quot;Decimal hours from midnight UTC&quot;</span><span class="p">,</span>
+                            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s2">&quot;hours since </span><span class="si">{}</span><span class="s2"> 00:00:00 +00:00&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)),</span>
+                            <span class="s1">&#39;axis&#39;</span><span class="p">:</span> <span class="s1">&#39;T&#39;</span><span class="p">})</span>
+        <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="s1">&#39;range&#39;</span><span class="p">,</span> <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="p">),</span>
+                            <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height_list</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">/</span><span class="mf">1000.</span><span class="p">,</span>
+                            <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s2">&quot;Height&quot;</span><span class="p">,</span>
+                            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s2">&quot;km&quot;</span><span class="p">,</span> <span class="s1">&#39;axis&#39;</span><span class="p">:</span> <span class="s1">&#39;Z&#39;</span><span class="p">})</span>
+        <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time_age&#39;</span><span class="p">,</span> <span class="p">),</span>
+                            <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dict</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s2">&quot;Age of trajectory&quot;</span><span class="p">,</span>
+                            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s2">&quot;h&quot;</span><span class="p">})</span>
+
+        <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="s1">&#39;no_part&#39;</span><span class="p">,</span> <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="p">),</span>
+                            <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">no_part</span><span class="p">),</span>
+                            <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s2">&quot;number particles/trajectories&quot;</span><span class="p">,</span>
+                            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s2">&quot;no&quot;</span><span class="p">})</span>
+        <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="s1">&#39;time_res&#39;</span><span class="p">,</span> <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="p">),</span>
+                            <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_res</span><span class="p">),</span>
+                            <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s2">&quot;backward time resolution&quot;</span><span class="p">,</span>
+                            <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s2">&quot;no&quot;</span><span class="p">})</span>
+
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stat2d_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stat2d_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="n">k</span><span class="p">,</span> <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">),</span>
+                                          <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">stat2d_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+                                          <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="n">k</span><span class="p">})</span>
+
+        <span class="c1"># its sufficient to save the age of the trajectory once</span>
+        <span class="n">raw_data_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">raw_data_keys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;age&#39;</span><span class="p">)</span>
+        <span class="c1"># chance to modify some parameter descriptions for better readability</span>
+        <span class="n">modified_params</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+                                 <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s2">&quot;Hysplit &quot;</span> <span class="o">+</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()}</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">raw_data_keys</span><span class="p">}</span>
+        <span class="n">modified_params</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="s1">&#39;traj_height&#39;</span><span class="p">,</span> <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s2">&quot;Hysplit height of air parcel&quot;</span><span class="p">}</span>
+        <span class="k">if</span> <span class="s1">&#39;land_sfc_category&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">modified_params</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="n">modified_params</span><span class="p">[</span><span class="s1">&#39;land_sfc_category&#39;</span><span class="p">][</span><span class="s1">&#39;long_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Modis land use category (simplified)&quot;</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">raw_data_keys</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;var_name&#39;</span><span class="p">],</span>
+                                          <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="s1">&#39;time_age&#39;</span><span class="p">),</span>
+                                          <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+                                          <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;long_name&#39;</span><span class="p">]})</span>
+
+        <span class="c1"># save the land use</span>
+        <span class="n">ls_data_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statls_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ls_data_keys &#39;</span><span class="p">,</span> <span class="n">ls_data_keys</span><span class="p">)</span>
+        <span class="n">modified_params</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>
+                                 <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s2">&quot;land surface &quot;</span> <span class="o">+</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+                                 <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ls_categories</span><span class="p">)}</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">ls_data_keys</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ls_data_keys</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">statls_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;var_name&#39;</span><span class="p">],</span>
+                                          <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="s1">&#39;categories&#39;</span><span class="p">),</span>
+                                          <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">statls_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">),</span>
+                                          <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;long_name&#39;</span><span class="p">],</span>
+                                          <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;comment&#39;</span><span class="p">]})</span>
+
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="n">ky</span> <span class="k">for</span> <span class="n">ky</span> <span class="ow">in</span> <span class="n">ls_data_keys</span> <span class="k">if</span> <span class="s1">&#39;ens&#39;</span> <span class="ow">in</span> <span class="n">ky</span><span class="p">]:</span>
+            <span class="n">rel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statls_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="n">no_below</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stat2d_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;_no_below&quot;</span><span class="p">)</span>
+            <span class="n">no_below</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">no_below</span><span class="p">[:,:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">rel</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">no_below</span><span class="p">[</span><span class="n">no_below</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">no_part</span><span class="p">)</span><span class="o">*</span><span class="mi">10</span><span class="o">*</span><span class="p">(</span><span class="mf">24.</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_res</span><span class="p">))</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">norm</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">rel</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">norm</span><span class="p">[:,:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">rel</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+            <span class="n">normed_time</span> <span class="o">=</span> <span class="n">rel</span><span class="o">*</span><span class="n">no_below</span><span class="o">/</span><span class="n">norm</span>
+            <span class="n">normed_time</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">normed_time</span><span class="p">)]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">str_below</span> <span class="o">=</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;var_name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;occ_ens_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">var_name</span> <span class="o">=</span> <span class="s2">&quot;rt_normed_landsfc_&quot;</span> <span class="o">+</span> <span class="n">str_below</span>
+            <span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;normed residence time land surface &quot;</span> <span class="o">+</span> <span class="n">str_below</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="n">var_name</span><span class="p">,</span>
+                                          <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="s1">&#39;categories&#39;</span><span class="p">),</span>
+                                          <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="n">normed_time</span><span class="p">,</span>
+                                          <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="n">long_name</span><span class="p">,</span>
+                                          <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;comment&#39;</span><span class="p">]})</span>
+
+
+        <span class="c1"># and the geo names</span>
+        <span class="n">gn_data_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statgn_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;gn_data_keys &#39;</span><span class="p">,</span> <span class="n">gn_data_keys</span><span class="p">)</span>
+        <span class="n">modified_params</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>
+                                 <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s2">&quot;geography names &quot;</span> <span class="o">+</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+                                 <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geo_names</span><span class="p">)}</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">gn_data_keys</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">gn_data_keys</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">statgn_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;var_name&#39;</span><span class="p">],</span>
+                                          <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="s1">&#39;regions&#39;</span><span class="p">),</span>
+                                          <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">statgn_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">),</span>
+                                          <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;long_name&#39;</span><span class="p">],</span>
+                                          <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;comment&#39;</span><span class="p">]})</span>
+            
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">gn_data_keys</span><span class="p">:</span>
+            <span class="n">rel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statgn_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="n">no_below</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stat2d_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;_no_below&quot;</span><span class="p">)</span>
+            <span class="n">no_below</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">no_below</span><span class="p">[:,:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">rel</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">no_below</span><span class="p">[</span><span class="n">no_below</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">no_part</span><span class="p">)</span><span class="o">*</span><span class="mi">10</span><span class="o">*</span><span class="p">(</span><span class="mf">24.</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_res</span><span class="p">))</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">norm</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">rel</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">norm</span><span class="p">[:,:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">rel</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+            <span class="n">normed_time</span> <span class="o">=</span> <span class="n">rel</span><span class="o">*</span><span class="n">no_below</span><span class="o">/</span><span class="n">norm</span>
+            <span class="n">normed_time</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">normed_time</span><span class="p">)]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">str_below</span> <span class="o">=</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;var_name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;region_ens_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">var_name</span> <span class="o">=</span> <span class="s2">&quot;rt_normed_region_&quot;</span> <span class="o">+</span> <span class="n">str_below</span>
+            <span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;normed residence time named region &quot;</span> <span class="o">+</span> <span class="n">str_below</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="n">var_name</span><span class="p">,</span>
+                                          <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="s1">&#39;regions&#39;</span><span class="p">),</span>
+                                          <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="n">normed_time</span><span class="p">,</span>
+                                          <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="n">long_name</span><span class="p">,</span>
+                                          <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;comment&#39;</span><span class="p">]})</span>
+
+
+        <span class="c1"># TODO make statlat optional statlat_dict</span>
+        <span class="n">lat_data_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statlat_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;lat_data_keys &#39;</span><span class="p">,</span> <span class="n">lat_data_keys</span><span class="p">)</span>
+        <span class="n">modified_params</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>
+                                 <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="s2">&quot;lat_thres &quot;</span> <span class="o">+</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+                                 <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lat_names</span><span class="p">)}</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">lat_data_keys</span><span class="p">}</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">lat_data_keys</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;self.statlat_dict.keys()&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">statlat_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">statlat_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;var_name&#39;</span><span class="p">],</span>
+                                          <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="s1">&#39;lat_thres&#39;</span><span class="p">),</span>
+                                          <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">statlat_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">),</span>
+                                          <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;long_name&#39;</span><span class="p">],</span>
+                                          <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;comment&#39;</span><span class="p">]})</span>
+
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">lat_data_keys</span><span class="p">:</span>
+            <span class="n">rel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statlat_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="n">no_below</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stat2d_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="s2">&quot;_no_below&quot;</span><span class="p">)</span>
+            <span class="n">no_below</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">no_below</span><span class="p">[:,:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">rel</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">no_below</span><span class="p">[</span><span class="n">no_below</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">no_part</span><span class="p">)</span><span class="o">*</span><span class="mi">10</span><span class="o">*</span><span class="p">(</span><span class="mf">24.</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_res</span><span class="p">))</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">norm</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">rel</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">norm</span><span class="p">[:,:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">],</span> <span class="n">rel</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+            <span class="n">normed_time</span> <span class="o">=</span> <span class="n">rel</span><span class="o">*</span><span class="n">no_below</span><span class="o">/</span><span class="n">norm</span>
+            <span class="n">normed_time</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">normed_time</span><span class="p">)]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">str_below</span> <span class="o">=</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;var_name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;lat_ens_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">var_name</span> <span class="o">=</span> <span class="s2">&quot;rt_normed_lat_&quot;</span> <span class="o">+</span> <span class="n">str_below</span>
+            <span class="n">long_name</span> <span class="o">=</span> <span class="s2">&quot;normed residence time latitude &quot;</span> <span class="o">+</span> <span class="n">str_below</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">save_item</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;var_name&#39;</span><span class="p">:</span> <span class="n">var_name</span><span class="p">,</span>
+                                          <span class="s1">&#39;dimension&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;height&#39;</span><span class="p">,</span> <span class="s1">&#39;lat_thres&#39;</span><span class="p">),</span>
+                                          <span class="s1">&#39;arr&#39;</span><span class="p">:</span> <span class="n">normed_time</span><span class="p">,</span>
+                                          <span class="s1">&#39;long_name&#39;</span><span class="p">:</span> <span class="n">long_name</span><span class="p">,</span>
+                                          <span class="s1">&#39;comment&#39;</span><span class="p">:</span> <span class="n">modified_params</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;comment&#39;</span><span class="p">]})</span>
+
+
+        <span class="c1"># save_item(dataset, {&#39;var_name&#39;: &#39;width&#39;, &#39;dimension&#39;: (&#39;time&#39;, &#39;height&#39;),</span>
+        <span class="c1">#                     &#39;arr&#39;: .corr_width_reg[:].filled(), &#39;long_name&#39;: &quot;Spectral width&quot;,</span>
+        <span class="c1">#                     &#39;comment&#39;: &quot;Wind profiler spectral width (standard deviation) corrected by cloud radar (only Bragg contribution)&quot;,</span>
+        <span class="c1">#                     &#39;units&#39;: &quot;m s-1&quot;, &#39;units_html&#39;: &quot;m s&lt;sup&gt;-1&lt;/sup&gt;&quot;,</span>
+        <span class="c1">#                     &#39;missing_value&#39;: -99., &#39;plot_range&#39;: (0.01, 4.),</span>
+        <span class="c1">#                     &#39;plot_scale&#39;: &quot;logarithmic&quot;})</span>
+
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;output_meta.toml&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_meta</span><span class="p">:</span>
+            <span class="n">meta_info</span> <span class="o">=</span> <span class="n">toml</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">output_meta</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+        <span class="n">dataset</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">meta_info</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">][</span><span class="n">model_str</span><span class="p">]</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;station&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;moving&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;station&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;station&#39;</span><span class="p">][</span><span class="s1">&#39;moving&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">dataset</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="s2">&quot;Moving Platform!&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dataset</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;station&#39;</span><span class="p">][</span><span class="s1">&#39;lat&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;station&#39;</span><span class="p">][</span><span class="s1">&#39;lon&#39;</span><span class="p">])</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">institution</span> <span class="o">=</span> <span class="n">meta_info</span><span class="p">[</span><span class="s2">&quot;institution&quot;</span><span class="p">]</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">authors</span> <span class="o">=</span> <span class="n">meta_info</span><span class="p">[</span><span class="s2">&quot;authors&quot;</span><span class="p">]</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">contact</span> <span class="o">=</span> <span class="n">meta_info</span><span class="p">[</span><span class="s2">&quot;contact&quot;</span><span class="p">]</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">creation_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M UTC&quot;</span><span class="p">)</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">day</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">day</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">month</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">month</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">year</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">year</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">git_commit</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">git_branch</span> <span class="o">=</span> <span class="n">get_git_hash</span><span class="p">()</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span></div></div>
+
+
+
+<span class="c1">#</span>
+<span class="c1"># for some wired reson the submodule imports have to be done afterwards</span>
+<span class="c1">#</span>
+<span class="kn">import</span> <span class="nn">trace_source.hysplit</span>
+<span class="kn">import</span> <span class="nn">trace_source.flexpart</span>
+<span class="kn">import</span> <span class="nn">trace_source.land_sfc</span>
+<span class="kn">import</span> <span class="nn">trace_source.helpers</span>
+<span class="kn">import</span> <span class="nn">trace_source.simulations</span>
 </pre></div>
 
            </div>
+           
           </div>
           <footer>
   
@@ -177,11 +525,19 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2018, Martin Radenz.
+        
+        &copy; Copyright 2020, Martin Radenz
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -193,37 +549,15 @@
   </div>
   
 
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
-            VERSION:'0.1',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>
